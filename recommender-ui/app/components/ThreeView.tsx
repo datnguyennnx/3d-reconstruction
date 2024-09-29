@@ -9,19 +9,26 @@ import {
 import * as THREE from 'three'
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js'
 
-const floorGeometry = new THREE.PlaneGeometry(20, 20)
-const floorMaterial = new THREE.MeshStandardMaterial({ color: '#a0a0a0' })
-
 function Model({ url }: { url: string }) {
     const obj = useLoader(OBJLoader, url)
     const groupRef = useRef<THREE.Group>(null)
     const { camera } = useThree()
 
     const vec = useMemo(() => new THREE.Vector3(), [])
+    const box = useMemo(() => new THREE.Box3(), [])
+    const phongMaterial = useMemo(
+        () =>
+            new THREE.MeshPhongMaterial({
+                color: new THREE.Color(0, 1, 100), // Red color
+                shininess: 60,
+                specular: new THREE.Color(0.2, 0.2, 0.5),
+            }),
+        [],
+    )
 
     useEffect(() => {
         if (obj && groupRef.current) {
-            const box = new THREE.Box3().setFromObject(obj)
+            box.setFromObject(obj)
             const center = box.getCenter(vec)
             obj.position.sub(center)
 
@@ -35,9 +42,16 @@ function Model({ url }: { url: string }) {
             camera.position.set(maxDim * 0.8, maxDim * 0.8, maxDim * 0.8)
             camera.lookAt(0, maxDim / 2, 0)
 
-            groupRef.current.add(obj.clone())
+            // Apply Phong material to all meshes in the loaded object
+            obj.traverse((child) => {
+                if (child instanceof THREE.Mesh) {
+                    child.material = phongMaterial
+                }
+            })
+
+            groupRef.current.add(obj)
         }
-    }, [obj, camera, vec])
+    }, [obj, camera, vec, box, phongMaterial])
 
     useFrame((_, delta) => {
         if (groupRef.current) {
@@ -65,6 +79,7 @@ function Floor() {
         />
     )
 }
+
 function LoadingFallback() {
     return (
         <mesh>
@@ -98,18 +113,19 @@ export const ThreeViewer: React.FC<ThreeViewerProps> = ({
                 <color attach="background" args={[backgroundColor]} />
                 <ambientLight intensity={isDarkMode ? 0.3 : 0.5} />
                 <directionalLight
-                    position={[5, 5, 5]}
-                    intensity={isDarkMode ? 0.7 : 1}
+                    position={[0.25, 0.88, -0.38]}
+                    intensity={isDarkMode ? 0.7 : 0.8}
                     castShadow
                 />
                 <PerspectiveCamera
                     makeDefault
-                    fov={50}
-                    near={0.1}
+                    fov={75}
+                    aspect={320 / 240}
+                    near={1}
                     far={1000}
-                    position={[0, 5, 10]}
+                    position={[2, 2, 2]}
                 />
-                <OrbitControls target={[0, 2.5, 0]} enableDamping={false} />
+                <OrbitControls target={[0, 0, 0]} enableDamping={false} />
                 <Floor />
                 <Suspense fallback={<LoadingFallback />}>
                     <Model url={objUrl} />
