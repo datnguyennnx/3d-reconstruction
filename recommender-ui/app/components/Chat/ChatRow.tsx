@@ -1,6 +1,6 @@
-import { Logo } from '~/components/Logo'
-import { LoadingDots } from '~/components/LoadingDots'
-import { MarkdownRenderer } from '~/components/MarkdownRenderer'
+import { Logo } from '../Common/Logo'
+import { LoadingDots } from '../Common/LoadingDots'
+import { MarkdownRenderer } from '../Common/MarkdownRenderer'
 
 interface ChatRowProps {
     message: string

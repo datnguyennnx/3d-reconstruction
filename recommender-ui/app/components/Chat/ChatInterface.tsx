@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
-import { ChatRow } from '~/components/ChatRow'
-import { Input } from '~/components/ui/input'
-import { Button } from '~/components/ui/button'
-import { Dot } from '~/components/Dot'
+import { ChatRow } from './ChatRow'
+import { Input } from '../ui/input'
+import { Button } from '../ui/button'
+import { Dot } from '../Common/Dot'
 
 interface Message {
     content: string

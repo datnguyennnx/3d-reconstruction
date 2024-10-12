@@ -1,5 +1,5 @@
 import React from 'react'
-import { Robot, User } from '~/components/svg'
+import { Robot, User } from '../svg'
 
 interface LogoProps {
     hasText?: boolean
