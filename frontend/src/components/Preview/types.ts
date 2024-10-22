@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction } from 'react'
-import { ModelDetails } from '~/components/3D/types'
+import { ModelDetails } from '@/components/3D/types'
 
 export interface ImageData {
     url: string
@@ -16,11 +16,6 @@ export interface DetailsPanelProps {
 }
 
 export interface PreviewProps {
-    images: ImageData[]
-    selectedImage: number
-    onImageSelect: (index: number) => void
-    viewMode: 'grid' | 'single' | '3d'
-    setViewMode: Dispatch<SetStateAction<'grid' | 'single' | '3d'>>
     objUrls: string[]
     isDarkMode: boolean
     toggleDarkMode: () => void

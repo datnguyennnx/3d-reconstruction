@@ -14,7 +14,6 @@ export default function Index() {
         // ... your initial images here
     ])
     const [selectedImage, setSelectedImage] = useState(0)
-    const [viewMode, setViewMode] = useState<'grid' | 'single' | '3d'>('3d')
     const [objUrls, setObjUrls] = useState<string[]>(['/car.obj', '/car2.obj'])
     const [selectedModel, setSelectedModel] = useState(0)
     const [isDarkMode, setIsDarkMode] = useState(false)
@@ -53,7 +52,6 @@ export default function Index() {
 
     const handle3DModelChange = (modelUrl: string) => {
         setObjUrls((prevUrls) => [...prevUrls, modelUrl])
-        setViewMode('3d')
     }
 
     const handleModelLoaded = (details: ModelDetails, index: number) => {
@@ -69,7 +67,7 @@ export default function Index() {
     return (
         <main className={`flex min-h-screen items-stretch p-8 relative`}>
             <BackgroundDots className="absolute inset-0 z-0" />
-            <div className="w-full z-10 relative flex">
+            <div className="w-full max-h-screen z-10 relative flex">
                 <div className={`w-1/2 h-full flex flex-col mr-4`}>
                     <ChatInterface
                         initialMessage={initialMessage}
@@ -77,13 +75,8 @@ export default function Index() {
                         on3DModelChange={handle3DModelChange}
                     />
                 </div>
-                <div className={`w-1/2 h-[calc(100vh-4rem)]`} ref={fullScreenRef}>
+                <div className={`w-1/2 h-full`} ref={fullScreenRef}>
                     <Preview
-                        images={images}
-                        selectedImage={selectedImage}
-                        onImageSelect={handleImageSelect}
-                        viewMode={viewMode}
-                        setViewMode={setViewMode}
                         objUrls={objUrls}
                         isDarkMode={isDarkMode}
                         toggleDarkMode={toggleDarkMode}
