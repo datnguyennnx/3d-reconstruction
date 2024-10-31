@@ -4,8 +4,34 @@ from langchain.schema import HumanMessage, SystemMessage
 from langchain.callbacks import AsyncIteratorCallbackHandler
 import logging
 from config.settings import settings
+import base64
+from PIL import Image
+import io
 
 logger = logging.getLogger(__name__)
+
+def encode_image_to_base64(image_path):
+    try:
+        with open(image_path, "rb") as image_file:
+            return base64.b64encode(image_file.read()).decode('utf-8')
+    except Exception as e:
+        logger.error(f"Error encoding image: {e}")
+        return None
+
+async def generate_image_base64():
+    # This is a placeholder. Replace with actual image generation logic
+    # For example, you might want to:
+    # 1. Generate an image using an AI model
+    # 2. Save it temporarily
+    # 3. Convert to base64
+    # 4. Delete the temporary file
+    
+    # For now, we'll create a simple colored image as an example
+    img = Image.new('RGB', (100, 100), color='red')
+    img_byte_arr = io.BytesIO()
+    img.save(img_byte_arr, format='PNG')
+    img_byte_arr = img_byte_arr.getvalue()
+    return base64.b64encode(img_byte_arr).decode('utf-8')
 
 async def askLLM(content: str):
     logger.info(f"Received message: {content}")
@@ -13,7 +39,7 @@ async def askLLM(content: str):
     callback = AsyncIteratorCallbackHandler()
 
     model = ChatOpenAI(
-        model_name="gpt-3.5-turbo",
+        model_name="gpt-4o-mini",
         streaming=True,
         verbose=True,
         callbacks=[callback],
@@ -131,16 +157,29 @@ async def askLLM(content: str):
         If you'd like, I can share some additional resources or discuss any of these strategies in more detail. Please let me know how else I can support you on your journey to better mental well-being.
     """)
 
-
     logger.info("Generating response")
     task = asyncio.create_task(
         model.agenerate(messages=[[system_message, HumanMessage(content=content)]])
     )
 
     try:
+        # Check if the message requests an image
+        if "generate image" in content.lower() or "create image" in content.lower():
+            # First yield some text indicating image generation
+            yield "Generating image..."
+            
+            # Generate and yield the base64 image
+            image_base64 = await generate_image_base64()
+            yield f"[IMAGE_BASE64]{image_base64}"
+            
+            # Continue with any additional text response
+            yield "\nImage generated successfully!"
+        
+        # Stream the regular text response
         async for token in callback.aiter():
             logger.debug(f"Yielding token: {token}")
             yield token
+            
     except Exception as e:
         logger.error(f"Caught exception while streaming response: {e}")
     finally:

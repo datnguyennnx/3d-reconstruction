@@ -1,32 +1,106 @@
 import logging
-from fastapi import APIRouter, WebSocket
+from fastapi import APIRouter, Request
+from fastapi.responses import StreamingResponse
 from core.ask import askLLM
+import json
+from pydantic import BaseModel
+from fastapi.middleware.cors import CORSMiddleware
 
 router = APIRouter()
-
 logger = logging.getLogger(__name__)
 
-@router.websocket("/ws/chat")
-async def websocket_endpoint(websocket: WebSocket):
-    await websocket.accept()
-    logger.info("WebSocket connection established")
-    
-    try:
-        while True:
-            # Receive message from client
-            data = await websocket.receive_text()
-            logger.info(f"Received message: {data}")
+class ChatMessage(BaseModel):
+    message: str
+
+@router.post("/chat/stream")
+async def sse_chat_endpoint(message: ChatMessage):
+    async def event_generator():
+        try:
+            # Get the message from the request body
+            query = message.message
+            logger.info(f"Received message: {query}")
             
-            # Generate and stream the response
-            async for token in askLLM(data):
-                await websocket.send_text(token)
-                logger.info(f"Sent token: {token}")
+            # Stream the response
+            async for token in askLLM(query):
+                if isinstance(token, str) and token.startswith("[IMAGE_BASE64]"):
+                    # Handle base64 image data
+                    image_data = token[12:]  # Remove the [IMAGE_BASE64] prefix
+                    data = json.dumps({
+                        "type": "image",
+                        "content": image_data
+                    })
+                else:
+                    # Handle regular text data
+                    data = json.dumps({
+                        "type": "text",
+                        "content": token
+                    })
+                
+                yield f"data: {data}\n\n"
+                logger.info(f"Sent {'image' if '[IMAGE_BASE64]' in token else 'text'} data")
             
-            # Send a special message to indicate the end of the response
-            await websocket.send_text("[END]")
+            # Send end message
+            yield f"data: {json.dumps({'type': 'text', 'content': '[END]'})}\n\n"
             logger.info("Sent [END] message")
-    except Exception as e:
-        logger.error(f"Error in WebSocket connection: {str(e)}")
-    finally:
-        logger.info("WebSocket connection closed")
-        await websocket.close()
+            
+        except Exception as e:
+            logger.error(f"Error in SSE connection: {str(e)}")
+            yield f"data: {json.dumps({'type': 'error', 'content': str(e)})}\n\n"
+
+    return StreamingResponse(
+        event_generator(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
+            "Access-Control-Allow-Headers": "Content-Type",
+        }
+    )
+
+@router.get("/chat/stream")
+async def sse_endpoint():
+    async def event_generator():
+        try:
+            # Get the query parameter
+            query = "Hello"  # We'll update this to get from query params
+            
+            # Stream the response
+            async for token in askLLM(query):
+                if isinstance(token, str) and token.startswith("[IMAGE_BASE64]"):
+                    # Handle base64 image data
+                    image_data = token[12:]  # Remove the [IMAGE_BASE64] prefix
+                    data = json.dumps({
+                        "type": "image",
+                        "content": image_data
+                    })
+                else:
+                    # Handle regular text data
+                    data = json.dumps({
+                        "type": "text",
+                        "content": token
+                    })
+                
+                yield f"data: {data}\n\n"
+                logger.info(f"Sent {'image' if '[IMAGE_BASE64]' in token else 'text'} data")
+            
+            # Send end message
+            yield f"data: {json.dumps({'type': 'text', 'content': '[END]'})}\n\n"
+            logger.info("Sent [END] message")
+            
+        except Exception as e:
+            logger.error(f"Error in SSE connection: {str(e)}")
+            yield f"data: {json.dumps({'type': 'error', 'content': str(e)})}\n\n"
+
+    return StreamingResponse(
+        event_generator(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
+            "Access-Control-Allow-Headers": "Content-Type",
+        }
+    )

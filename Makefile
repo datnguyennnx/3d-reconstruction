@@ -11,7 +11,7 @@ down-prune:
 	docker compose down --volumes
 
 up-backend:
-	docker compose -f docker-compose.backend.yml up -d
+	docker compose -f docker-compose.backend.yml up --build
 
 up-backend-rebuild:
 	docker compose -f docker-compose.backend.yml up --build --force-recreate --no-deps
