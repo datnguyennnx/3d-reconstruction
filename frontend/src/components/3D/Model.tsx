@@ -1,15 +1,13 @@
 import React, { useRef, useEffect, useState } from 'react'
 import { useLoader, useThree } from '@react-three/fiber'
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js'
-import { Group, Box3, Vector3, Mesh, Object3D, Euler } from 'three'
+import { Group, Box3, Vector3, Mesh, Object3D } from 'three'
 import { ModelProps } from './types'
 
 export const Model: React.FC<ModelProps> = ({
     url,
-    position,
-    rotation,
-    onSelect,
-    index,
+    position = [0.5, 0, 0],
+    rotation = [0, 0, 0],
     material,
 }) => {
     const groupRef = useRef<Group>(null)
@@ -30,11 +28,7 @@ export const Model: React.FC<ModelProps> = ({
             newObj.scale.multiplyScalar(scale)
 
             // Center the object horizontally and place it directly on the floor
-            newObj.position.set(
-                -center.x * scale,
-                -box.min.y * scale,
-                -center.z * scale,
-            )
+            newObj.position.set(-center.x * scale, -box.min.y * scale, -center.z * scale)
 
             // Add the object to the group
             groupRef.current.add(newObj)
@@ -52,14 +46,7 @@ export const Model: React.FC<ModelProps> = ({
         }
     }, [loadedObject, material])
 
-    return (
-        <group
-            ref={groupRef}
-            position={position}
-            rotation={rotation}
-            onClick={() => onSelect(index)}
-        />
-    )
+    return <group ref={groupRef} position={position} rotation={rotation} />
 }
 
 Model.displayName = 'Model'

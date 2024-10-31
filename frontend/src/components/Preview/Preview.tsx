@@ -5,13 +5,11 @@ import { DetailsPanel } from './DetailsPanel'
 import { PreviewProps } from './types'
 
 export const Preview: React.FC<PreviewProps> = ({
-    objUrls,
+    objUrl,
     isDarkMode,
     toggleDarkMode,
     toggleFullScreen,
     isFullScreen,
-    onModelSelect,
-    selectedModel,
     onModelLoaded,
     modelDetails,
     currentMaterial,
@@ -27,11 +25,10 @@ export const Preview: React.FC<PreviewProps> = ({
                 onShowDetails={() => {}}
                 onChangeMaterial={onChangeMaterial}
             />
-            <div className="flex-grow relative">
+            <div className="flex-grow flex">
                 <ThreeViewer
-                    objUrls={objUrls}
+                    objUrl={objUrl}
                     isDarkMode={isDarkMode}
-                    onModelSelect={onModelSelect}
                     currentMaterial={currentMaterial}
                 />
             </div>

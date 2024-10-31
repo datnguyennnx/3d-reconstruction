@@ -10,8 +10,7 @@ export const DetailsPanel: React.FC<DetailsPanelProps> = ({ modelDetails }) => {
             <p>Vertices: {modelDetails.vertices}</p>
             <p>Triangles: {modelDetails.triangles}</p>
             <p>
-                Size: {modelDetails.sizeX.toFixed(2)} x{' '}
-                {modelDetails.sizeY.toFixed(2)} x{' '}
+                Size: {modelDetails.sizeX.toFixed(2)} x {modelDetails.sizeY.toFixed(2)} x{' '}
                 {modelDetails.sizeZ.toFixed(2)}
             </p>
         </div>

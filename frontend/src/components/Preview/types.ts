@@ -16,14 +16,12 @@ export interface DetailsPanelProps {
 }
 
 export interface PreviewProps {
-    objUrls: string[]
+    objUrl: string
     isDarkMode: boolean
     toggleDarkMode: () => void
     toggleFullScreen: () => void
     isFullScreen: boolean
-    onModelSelect: (index: number) => void
-    selectedModel: number
-    onModelLoaded: (details: ModelDetails, index: number) => void
+    onModelLoaded: (details: ModelDetails) => void
     modelDetails: ModelDetails | null
     currentMaterial: string
     onChangeMaterial: (material: string) => void

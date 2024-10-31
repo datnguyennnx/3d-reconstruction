@@ -14,8 +14,7 @@ export default function Index() {
         // ... your initial images here
     ])
     const [selectedImage, setSelectedImage] = useState(0)
-    const [objUrls, setObjUrls] = useState<string[]>(['/car.obj', '/car2.obj'])
-    const [selectedModel, setSelectedModel] = useState(0)
+    const [objUrl, setObjUrl] = useState<string>('/car.obj')
     const [isDarkMode, setIsDarkMode] = useState(false)
     const [isFullScreen, setIsFullScreen] = useState(false)
     const [modelDetails, setModelDetails] = useState<ModelDetails | null>(null)
@@ -26,10 +25,6 @@ export default function Index() {
     const handleImageSelect = (index: number) => {
         setSelectedImage(index)
         setImages((prevImages) => prevImages.map((img, i) => ({ ...img, selected: i === index })))
-    }
-
-    const handleModelSelect = (index: number) => {
-        setSelectedModel(index)
     }
 
     const toggleDarkMode = () => {
@@ -51,13 +46,11 @@ export default function Index() {
     }
 
     const handle3DModelChange = (modelUrl: string) => {
-        setObjUrls((prevUrls) => [...prevUrls, modelUrl])
+        setObjUrl(modelUrl)
     }
 
-    const handleModelLoaded = (details: ModelDetails, index: number) => {
-        if (index === selectedModel) {
-            setModelDetails(details)
-        }
+    const handleModelLoaded = (details: ModelDetails) => {
+        setModelDetails(details)
     }
 
     const handleChangeMaterial = (material: string) => {
@@ -77,13 +70,11 @@ export default function Index() {
                 </div>
                 <div className={`w-1/2 h-full`} ref={fullScreenRef}>
                     <Preview
-                        objUrls={objUrls}
+                        objUrl={objUrl}
                         isDarkMode={isDarkMode}
                         toggleDarkMode={toggleDarkMode}
                         toggleFullScreen={toggleFullScreen}
                         isFullScreen={isFullScreen}
-                        onModelSelect={handleModelSelect}
-                        selectedModel={selectedModel}
                         onModelLoaded={handleModelLoaded}
                         modelDetails={modelDetails}
                         currentMaterial={currentMaterial}

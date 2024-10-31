@@ -14,17 +14,17 @@ export const GridFloor: React.FC<GridFloorProps> = ({
 }) => {
     return (
         <Grid
-            args={[20, 20]}
+            args={[15, 15]}
             cellSize={1}
             cellThickness={1}
             cellColor={isDarkMode ? cellColor : cellColor}
             sectionSize={5}
-            sectionThickness={1.5}
+            sectionThickness={1}
             sectionColor={isDarkMode ? sectionColor : sectionColor}
-            fadeDistance={30}
+            fadeDistance={15}
             fadeStrength={1}
             followCamera={false}
-            position={[0, -0.01, 0]}
+            position={[0.05, 0, 0]}
         />
     )
 }

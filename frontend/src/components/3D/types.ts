@@ -10,16 +10,13 @@ export interface ModelDetails {
 
 export interface ModelProps {
     url: string
-    position: THREE.Vector3 | [number, number, number]
-    rotation: THREE.Euler | [number, number, number]
-    onSelect: (index: number) => void
-    index: number
+    position?: THREE.Vector3 | [number, number, number]
+    rotation?: THREE.Euler | [number, number, number]
     material: THREE.Material
 }
 
 export interface ThreeViewerProps {
-    objUrls: string[]
+    objUrl: string
     isDarkMode: boolean
-    onModelSelect: (index: number) => void
     currentMaterial: string
 }
