@@ -8,7 +8,6 @@ import {
     DialogContent,
     DialogHeader,
     DialogTitle,
-    DialogTrigger,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 
@@ -48,14 +47,15 @@ export const ImageUpload = ({
             setError(null)
 
             // Set original image preview
-            setOriginalImage(URL.createObjectURL(file))
+            const originalUrl = URL.createObjectURL(file)
+            setOriginalImage(originalUrl)
 
             // Create FormData and append the file
             const formData = new FormData()
             formData.append('file', file)
 
-            // Send request to backend
-            const response = await fetch('http://localhost:8000/remove-background', {
+            // Send request to backend for background removal
+            const response = await fetch('http://localhost:8000/api/remove-background', {
                 method: 'POST',
                 body: formData,
             })
@@ -66,8 +66,8 @@ export const ImageUpload = ({
 
             // Get the processed image blob
             const imageBlob = await response.blob()
-            const imageUrl = URL.createObjectURL(imageBlob)
-            setProcessedImage(imageUrl)
+            const processedUrl = URL.createObjectURL(imageBlob)
+            setProcessedImage(processedUrl)
             setIsDialogOpen(true)
 
             // Call the parent's onImageUpload if provided
@@ -111,7 +111,7 @@ export const ImageUpload = ({
                     <DialogHeader>
                         <DialogTitle>Image Preview</DialogTitle>
                     </DialogHeader>
-                    <div className="grid grid-cols-2 gap-4 py-4 ">
+                    <div className="grid grid-cols-2 gap-4 py-4">
                         {originalImage && (
                             <div className="flex flex-col items-center space-y-4">
                                 <h3 className="mb-2 text-lg font-bold">Original Image</h3>
@@ -121,7 +121,7 @@ export const ImageUpload = ({
                                         alt="Original image"
                                         fill
                                         className="p-4"
-                                        style={{ objectFit: 'inherit' }}
+                                        style={{ objectFit: 'contain' }}
                                     />
                                 </div>
                             </div>
@@ -135,7 +135,7 @@ export const ImageUpload = ({
                                         alt="Processed image"
                                         fill
                                         className="p-4"
-                                        style={{ objectFit: 'inherit' }}
+                                        style={{ objectFit: 'contain' }}
                                     />
                                 </div>
                             </div>

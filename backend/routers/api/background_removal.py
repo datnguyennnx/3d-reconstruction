@@ -9,7 +9,7 @@ from rembg import remove
 router = APIRouter()
 logger = logging.getLogger(__name__)
 
-@router.post("/remove-background")
+@router.post("/api/remove-background")
 async def remove_background(file: UploadFile = File(...)):
     try:
         # Read the image file

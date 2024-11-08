@@ -7,5 +7,7 @@ services:
             dockerfile: Dockerfile
         ports:
             - '8000:8000'
+        env_file:
+            - backend/.env
         environment:
             - CORS_ORIGINS=http://localhost:3000 # Allow frontend to connect when running locally

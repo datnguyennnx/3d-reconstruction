@@ -14,7 +14,7 @@ export default function Index() {
         // ... your initial images here
     ])
     const [selectedImage, setSelectedImage] = useState(0)
-    const [objUrl, setObjUrl] = useState<string>('/car.obj')
+    const [objUrl, setObjUrl] = useState<string>('')
     const [isDarkMode, setIsDarkMode] = useState(false)
     const [isFullScreen, setIsFullScreen] = useState(false)
     const [modelDetails, setModelDetails] = useState<ModelDetails | null>(null)
