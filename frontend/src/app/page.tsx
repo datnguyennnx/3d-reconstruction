@@ -58,17 +58,17 @@ export default function Index() {
     }
 
     return (
-        <main className={`flex min-h-screen items-stretch p-8 relative`}>
+        <main className={`flex min-h-screen max-w-screen items-stretch p-8 relative`}>
             <BackgroundDots className="absolute inset-0 z-0" />
-            <div className="w-full max-h-screen z-10 relative flex">
-                <div className={`w-1/2 h-full flex flex-col mr-4`}>
+            <div className="w-full max-w-full max-h-screen z-10 relative flex">
+                <div className={`w-1/2 max-h-screen flex flex-col mr-4`}>
                     <ChatInterface
                         initialMessage={initialMessage}
                         onNewImage={handleNewImage}
                         on3DModelChange={handle3DModelChange}
                     />
                 </div>
-                <div className={`w-1/2 max-h-screen`} ref={fullScreenRef}>
+                <div className={`w-1/2 max-w-1/2 max-h-screen`} ref={fullScreenRef}>
                     <Preview
                         objUrl={objUrl}
                         isDarkMode={isDarkMode}

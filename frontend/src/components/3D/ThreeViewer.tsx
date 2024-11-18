@@ -1,5 +1,5 @@
-import React, { Suspense } from 'react'
-import { Canvas } from '@react-three/fiber'
+import React, { Suspense, useEffect } from 'react'
+import { Canvas, useThree, extend } from '@react-three/fiber'
 import { PerspectiveCamera } from '@react-three/drei'
 import { Model } from './Model'
 import { GridFloor } from './GridFloor'
@@ -9,6 +9,23 @@ import { LoadingPlaceholder } from './LoadingPlaceholder'
 import { ThreeViewerProps } from './types'
 import * as THREE from 'three'
 
+// Aspect Ratio Enforcer Component
+const AspectRatioManager = () => {
+    const { camera, size } = useThree()
+
+    useEffect(() => {
+        const aspectRatio = 16 / 9
+        
+        // Type assertion to PerspectiveCamera
+        if (camera instanceof THREE.PerspectiveCamera) {
+            camera.aspect = aspectRatio
+            camera.updateProjectionMatrix()
+        }
+    }, [camera, size])
+
+    return null
+}
+
 export const ThreeViewer: React.FC<ThreeViewerProps> = ({
     objUrl,
     isDarkMode,
@@ -17,10 +34,40 @@ export const ThreeViewer: React.FC<ThreeViewerProps> = ({
     const material = createMaterial(currentMaterial)
 
     return (
-        <div style={{ width: '100%'}}>
-            <Canvas className='max-h-screen'>
+        <div style={{ 
+            width: '100%', 
+            height: '100%', 
+            aspectRatio: '16 / 9',
+            overflow: 'hidden'
+        }}>
+            <Canvas 
+                className='max-h-screen'
+                style={{ 
+                    width: '100%', 
+                    height: '100%',
+                    aspectRatio: '16 / 9'
+                }}
+                gl={{ 
+                    preserveDrawingBuffer: true,
+                    antialias: true,
+                }}
+                camera={{ 
+                    fov: 75, 
+                    near: 0.1, 
+                    far: 1000,
+                    position: [3, 3, 3] 
+                }}
+            >
+                <AspectRatioManager />
                 <color attach="background" args={[isDarkMode ? '#1a1a1a' : '#f0f0f0']} />
-                <PerspectiveCamera makeDefault position={[3, 3, 3]} />
+                <PerspectiveCamera 
+                    makeDefault 
+                    fov={75} 
+                    aspect={16/9} 
+                    near={0.1} 
+                    far={1000} 
+                    position={[3, 3, 3]} 
+                />
                 <CameraController />
                 <Lights isDarkMode={isDarkMode} />
                 <GridFloor
