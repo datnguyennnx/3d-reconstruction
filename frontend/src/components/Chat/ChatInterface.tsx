@@ -50,10 +50,13 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
             const formData = new FormData()
             formData.append('file', file)
 
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/remove-background`, {
-                method: 'POST',
-                // Additional configuration as needed
-            });
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_API_URL}/api/remove-background`,
+                {
+                    method: 'POST',
+                    // Additional configuration as needed
+                },
+            )
 
             if (!response.ok) {
                 throw new Error('Failed to process image')
@@ -93,7 +96,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
             const requestBody = JSON.stringify({
                 message,
                 conversation_id: conversationId,
-                user_id: 'default-user'
+                user_id: 'default-user',
             })
 
             // Create a new AI response message
@@ -101,7 +104,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                 content: '',
                 isUser: false,
                 isStreaming: true,
-                images: []
+                images: [],
             }
             setMessages((prev) => [...prev, aiResponseMessage])
 
@@ -126,11 +129,11 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
             }
 
             let fullResponse = ''
-            let images: string[] = []
+            const images: string[] = []
 
             while (true) {
                 const { done, value } = await reader.read()
-                
+
                 if (done) break
 
                 const chunk = decoder.decode(value)
@@ -153,7 +156,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                                             updatedMessages[lastMessageIndex] = {
                                                 ...updatedMessages[lastMessageIndex],
                                                 content: fullResponse,
-                                                images: images
+                                                images: images,
                                             }
                                             return updatedMessages
                                         })
@@ -167,7 +170,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                                                 const lastMessageIndex = updatedMessages.length - 1
                                                 updatedMessages[lastMessageIndex] = {
                                                     ...updatedMessages[lastMessageIndex],
-                                                    images: images
+                                                    images: images,
                                                 }
                                                 return updatedMessages
                                             })
@@ -180,7 +183,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                                             const lastMessageIndex = updatedMessages.length - 1
                                             updatedMessages[lastMessageIndex] = {
                                                 ...updatedMessages[lastMessageIndex],
-                                                isStreaming: false
+                                                isStreaming: false,
                                             }
                                             return updatedMessages
                                         })
@@ -207,7 +210,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                 },
             ])
         }
-    };
+    }
 
     return (
         <div className={`w-full h-full flex flex-col border-2 bg-white rounded-lg overflow-hidden`}>
@@ -239,7 +242,8 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                             <Button
                                 type="submit"
                                 disabled={isLoading || !isConnected}
-                                className={`text-white bg-black`}>
+                                className={`text-white bg-black`}
+                            >
                                 Send
                             </Button>
                         </div>
@@ -254,5 +258,5 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                 </div>
             </div>
         </div>
-    );
+    )
 }

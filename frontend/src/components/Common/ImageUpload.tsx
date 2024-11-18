@@ -3,12 +3,7 @@
 import React, { useRef, useState } from 'react'
 import { ImageUp } from 'lucide-react'
 import Image from 'next/image'
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-} from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 
 interface ImageUploadProps {
@@ -55,10 +50,13 @@ export const ImageUpload = ({
             formData.append('file', file)
 
             // Send request to backend for background removal
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/remove-background`, {
-                method: 'POST',
-                body: formData
-            });
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_API_URL}/api/remove-background`,
+                {
+                    method: 'POST',
+                    body: formData,
+                },
+            )
 
             if (!response.ok) {
                 throw new Error('Failed to process image')
@@ -95,7 +93,8 @@ export const ImageUpload = ({
         <>
             <div
                 onClick={handleClick}
-                className={`cursor-pointer ${isLoading ? 'opacity-50 pointer-events-none' : ''}`}>
+                className={`cursor-pointer ${isLoading ? 'opacity-50 pointer-events-none' : ''}`}
+            >
                 <input
                     ref={fileInputRef}
                     className="hidden"
@@ -152,7 +151,8 @@ export const ImageUpload = ({
                                     link.href = processedImage
                                     link.download = 'processed-image.png'
                                     link.click()
-                                }}>
+                                }}
+                            >
                                 Download
                             </Button>
                         )}

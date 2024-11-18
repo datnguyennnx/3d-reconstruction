@@ -4,8 +4,8 @@ import React, { useState, useRef } from 'react'
 import { BackgroundDots } from '@/components/Common/BackgroundDot'
 import { ChatInterface } from '@/components/Chat/ChatInterface'
 import { Preview } from '@/components/Preview/Preview'
-import { ModelDetails } from '@/components/3D/types'
-import { ImageData } from '@/components/Preview/types'
+import { type ModelDetails } from '@/components/3D/types'
+import { type ImageData } from '@/components/Preview/types'
 
 export default function Index() {
     const initialMessage = 'Hi there. May I help you with anything?'
@@ -40,10 +40,10 @@ export default function Index() {
     }
 
     const handleNewImage = (imageUrl: string) => {
-        const newImage: ImageData = { 
-            url: imageUrl, 
+        const newImage: ImageData = {
+            url: imageUrl,
             selected: false,
-            id: `image-${Date.now()}` 
+            id: `image-${Date.now()}`,
         }
         setImages((prevImages) => [...prevImages, newImage])
     }

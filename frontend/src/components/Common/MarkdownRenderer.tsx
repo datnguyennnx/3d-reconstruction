@@ -55,7 +55,8 @@ export const MarkdownRenderer = ({ content, isStreaming, onImageClick }: Markdow
                         />
                         <button
                             onClick={() => onImageClick?.((props.children as string) || '')}
-                            className="absolute top-2 right-2 p-2 bg-white/80 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-white">
+                            className="absolute top-2 right-2 p-2 bg-white/80 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-white"
+                        >
                             <Sparkles className="w-4 h-4 text-gray-700" />
                         </button>
                     </div>
@@ -92,7 +93,8 @@ export const MarkdownRenderer = ({ content, isStreaming, onImageClick }: Markdow
                     />
                     <button
                         onClick={() => onImageClick?.(src || '')}
-                        className="absolute top-2 right-2 p-2 bg-white/80 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-white">
+                        className="absolute top-2 right-2 p-2 bg-white/80 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-white"
+                    >
                         <Sparkles className="w-4 h-4 text-gray-700" />
                     </button>
                 </div>
@@ -110,7 +112,8 @@ export const MarkdownRenderer = ({ content, isStreaming, onImageClick }: Markdow
                     className="mockup-code scrollbar-thin scrollbar-track-base-content/5 scrollbar-thumb-base-content/40 scrollbar-track-rounded-md scrollbar-thumb-rounded"
                     showLineNumbers={true}
                     useInlineStyles={true}
-                    {...props}>
+                    {...props}
+                >
                     {codeString}
                 </SyntaxHighlighter>
             ) : (
@@ -147,7 +150,8 @@ export const MarkdownRenderer = ({ content, isStreaming, onImageClick }: Markdow
                     <button
                         onClick={handleCopy}
                         className="absolute right-2 top-4 z-50 rounded-md bg-gray-700 text-gray-200 hover:bg-gray-600 p-2 transition-all duration-200 ease-in-out"
-                        title={isCopied ? 'Copied!' : 'Copy code'}>
+                        title={isCopied ? 'Copied!' : 'Copy code'}
+                    >
                         {isCopied ? <Check size={18} /> : <ClipboardCopy size={18} />}
                     </button>
                     {children}

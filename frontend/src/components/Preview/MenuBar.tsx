@@ -1,12 +1,6 @@
 import React from 'react'
 import { Button } from '../ui/button'
-import {
-    MdStyle,
-    MdDarkMode,
-    MdLightMode,
-    MdFullscreen,
-    MdFullscreenExit,
-} from 'react-icons/md'
+import { MdStyle, MdDarkMode, MdLightMode, MdFullscreen, MdFullscreenExit } from 'react-icons/md'
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -29,7 +23,7 @@ export const MenuBar: React.FC<MenuBarProps> = ({
     isFullScreen,
     onChangeMaterial,
 }) => {
-    const buttonClass = `rounded-md p-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all duration-200 ease-in-out hover:bg-gray-200 dark:hover:bg-gray-200`
+    const buttonClass = `rounded-md p-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all duration-200 ease-in-out hover:bg-gray-200 dark:hover:bg-gray-200 `
     const activeButtonClass = `${buttonClass} bg-gray-200 dark:bg-gray-700 text-black dark:text-white`
     const inactiveButtonClass = `${buttonClass} ${
         isDarkMode ? 'bg-black text-white' : 'bg-white text-black'
@@ -39,7 +33,8 @@ export const MenuBar: React.FC<MenuBarProps> = ({
         <div
             className={`${
                 isDarkMode ? 'bg-black text-white' : 'bg-gray-50 text-black'
-            } p-1.5  z-20 flex space-x-1.5 justify-end`}>
+            } p-1.5  z-20 flex space-x-1.5 justify-end`}
+        >
             <>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -49,26 +44,31 @@ export const MenuBar: React.FC<MenuBarProps> = ({
                     </DropdownMenuTrigger>
                     <DropdownMenuContent
                         className={`${
-                            isDarkMode ? 'bg-black text-white' : 'bg-white text-black'
-                        } p-1.5 rounded-md shadow-lg`}>
+                            isDarkMode ? 'bg-black text-white ' : 'bg-white text-black'
+                        } p-1.5 rounded-md shadow-lg`}
+                    >
                         <DropdownMenuItem
                             onClick={() => onChangeMaterial('basic')}
-                            className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-200 px-2 py-1 rounded">
+                            className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-50 dark:hover:text-black px-2 py-1 rounded"
+                        >
                             Basic
                         </DropdownMenuItem>
                         <DropdownMenuItem
                             onClick={() => onChangeMaterial('normal')}
-                            className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-200 px-2 py-1 rounded">
+                            className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-50 dark:hover:text-black px-2 py-1 rounded"
+                        >
                             Normal
                         </DropdownMenuItem>
                         <DropdownMenuItem
                             onClick={() => onChangeMaterial('phong')}
-                            className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-200 px-2 py-1 rounded">
+                            className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-50 dark:hover:text-black px-2 py-1 rounded"
+                        >
                             Phong
                         </DropdownMenuItem>
                         <DropdownMenuItem
                             onClick={() => onChangeMaterial('standard')}
-                            className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-200 px-2 py-1 rounded">
+                            className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-50 dark:hover:text-black px-2 py-1 rounded"
+                        >
                             Standard
                         </DropdownMenuItem>
                     </DropdownMenuContent>
@@ -78,7 +78,8 @@ export const MenuBar: React.FC<MenuBarProps> = ({
             <Button
                 onClick={toggleDarkMode}
                 className={inactiveButtonClass}
-                title={isDarkMode ? 'Light Mode' : 'Dark Mode'}>
+                title={isDarkMode ? 'Light Mode' : 'Dark Mode'}
+            >
                 {isDarkMode ? (
                     <MdLightMode className="w-5 h-5" />
                 ) : (
@@ -88,7 +89,8 @@ export const MenuBar: React.FC<MenuBarProps> = ({
             <Button
                 onClick={toggleFullScreen}
                 className={inactiveButtonClass}
-                title={isFullScreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}>
+                title={isFullScreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
+            >
                 {isFullScreen ? (
                     <MdFullscreenExit className="w-5 h-5" />
                 ) : (

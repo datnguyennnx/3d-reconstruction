@@ -8,17 +8,24 @@ interface ChatRowProps {
     bgColor: string
     isLoading?: boolean
     isStreaming?: boolean
-    images?: string[]  // Add support for images from Dify
+    images?: string[] // Add support for images from Dify
 }
 
-export const ChatRow = ({ message, isUser, bgColor, isLoading, isStreaming, images }: ChatRowProps) => {
+export const ChatRow = ({
+    message,
+    isUser,
+    bgColor,
+    isLoading,
+    isStreaming,
+    images,
+}: ChatRowProps) => {
     // Function to render message content with images
     const renderContent = () => {
         let content = message
 
         // If there are images from Dify, append them to the message content as markdown
         if (images && images.length > 0) {
-            content += '\n\n' + images.map(img => `![Generated Image](${img})`).join('\n')
+            content += '\n\n' + images.map((img) => `![Generated Image](${img})`).join('\n')
         }
 
         return content
@@ -34,14 +41,16 @@ export const ChatRow = ({ message, isUser, bgColor, isLoading, isStreaming, imag
                     <div
                         className={`mx-2 py-3 px-4 ${bgColor} rounded-lg ${
                             isUser ? 'rounded-tr-none' : 'rounded-tl-none'
-                        } break-words flex-grow`}>
+                        } break-words flex-grow`}
+                    >
                         <LoadingDots />
                     </div>
                 ) : (
                     <div
                         className={`mx-2 py-3 px-4 ${bgColor} rounded-lg ${
                             isUser ? 'rounded-tr-none' : 'rounded-tl-none'
-                        } break-words flex-grow`}>
+                        } break-words flex-grow`}
+                    >
                         <MarkdownRenderer content={renderContent()} isStreaming={isStreaming} />
                     </div>
                 )}

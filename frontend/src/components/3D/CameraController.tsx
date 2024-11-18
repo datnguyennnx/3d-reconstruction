@@ -45,7 +45,7 @@ export const CameraController: React.FC = () => {
             controls.mouseButtons = {
                 LEFT: THREE.MOUSE.ROTATE,
                 MIDDLE: THREE.MOUSE.DOLLY,
-                RIGHT: THREE.MOUSE.PAN
+                RIGHT: THREE.MOUSE.PAN,
             }
 
             // Update controls
@@ -60,10 +60,5 @@ export const CameraController: React.FC = () => {
         }
     }, [camera])
 
-    return (
-        <OrbitControls 
-            ref={controlsRef}
-            args={[camera, gl.domElement]}
-        />
-    )
+    return <OrbitControls ref={controlsRef} args={[camera, gl.domElement]} />
 }

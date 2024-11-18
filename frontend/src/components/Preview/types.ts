@@ -1,4 +1,4 @@
-import { ModelDetails } from '@/components/3D/types'
+import { type ModelDetails } from '@/components/3D/types'
 
 export interface ImageData {
     id?: string

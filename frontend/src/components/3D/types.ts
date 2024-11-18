@@ -1,4 +1,4 @@
-import * as THREE from 'three'
+import type * as THREE from 'three'
 
 export interface ModelDetails {
     vertices: number
@@ -7,8 +7,8 @@ export interface ModelDetails {
     sizeY: number
     sizeZ: number
     boundingBox?: {
-        min: { x: number, y: number, z: number }
-        max: { x: number, y: number, z: number }
+        min: { x: number; y: number; z: number }
+        max: { x: number; y: number; z: number }
     }
 }
 
@@ -17,11 +17,11 @@ export interface ModelProps {
     position?: THREE.Vector3 | [number, number, number]
     rotation?: THREE.Euler | [number, number, number]
     material: THREE.Material
-    
+
     // Enhanced model rendering options
     maxScale?: number // Maximum scaling limit
     centerModel?: boolean // Auto-center model in scene
-    
+
     // Optional rendering customization
     wireframe?: boolean
     opacity?: number
@@ -32,11 +32,11 @@ export interface ThreeViewerProps {
     isDarkMode: boolean
     currentMaterial: MaterialType
     onModelLoaded?: (details: ModelDetails) => void
-    
+
     // Advanced rendering options
     adaptiveCamera?: boolean // Dynamic camera positioning
     maxModelScale?: number // Global max model scale
-    
+
     // Scene customization
     showAxes?: boolean
     showGrid?: boolean
@@ -44,11 +44,11 @@ export interface ThreeViewerProps {
 }
 
 // Comprehensive material type definition
-export type MaterialType = 
-    | 'basic' 
-    | 'normal' 
-    | 'phong' 
-    | 'standard' 
+export type MaterialType =
+    | 'basic'
+    | 'normal'
+    | 'phong'
+    | 'standard'
     | 'wireframe'
     | 'transparent'
     | 'custom'

@@ -27,8 +27,7 @@ export const BackgroundDots = ({
     const maskStyle: React.CSSProperties = fade
         ? {
               maskImage: 'radial-gradient(circle, white 10%, transparent 90%)',
-              WebkitMaskImage:
-                  'radial-gradient(circle, white 10%, transparent 90%)',
+              WebkitMaskImage: 'radial-gradient(circle, white 10%, transparent 90%)',
           }
         : {}
 

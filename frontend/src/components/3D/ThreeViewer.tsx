@@ -6,7 +6,7 @@ import { GridFloor } from './GridFloor'
 import { Lights } from './Lights'
 import { CameraController } from './CameraController'
 import { LoadingPlaceholder } from './LoadingPlaceholder'
-import { ThreeViewerProps, MaterialType, ModelDetails } from './types'
+import { type ThreeViewerProps, type MaterialType, type ModelDetails } from './types'
 import * as THREE from 'three'
 
 // Aspect Ratio Enforcer Component
@@ -15,7 +15,7 @@ const AspectRatioManager = React.memo(() => {
 
     React.useEffect(() => {
         const aspectRatio = 16 / 9
-        
+
         // Type assertion to PerspectiveCamera
         if (camera instanceof THREE.PerspectiveCamera) {
             camera.aspect = aspectRatio
@@ -41,33 +41,33 @@ EnhancedAxesHelper.displayName = 'EnhancedAxesHelper'
 const createMaterial = (materialType: MaterialType): THREE.Material => {
     switch (materialType) {
         case 'basic':
-            return new THREE.MeshBasicMaterial({ 
+            return new THREE.MeshBasicMaterial({
                 color: 0x808080,
                 transparent: true,
-                opacity: 0.8
+                opacity: 0.8,
             })
         case 'normal':
             return new THREE.MeshNormalMaterial({
-                flatShading: true
+                flatShading: true,
             })
         case 'phong':
-            return new THREE.MeshPhongMaterial({ 
+            return new THREE.MeshPhongMaterial({
                 color: 0x808080,
                 shininess: 30,
-                specular: 0x111111
+                specular: 0x111111,
             })
         case 'standard':
-            return new THREE.MeshStandardMaterial({ 
+            return new THREE.MeshStandardMaterial({
                 color: 0x808080,
                 roughness: 0.5,
                 metalness: 0.5,
-                envMapIntensity: 1
+                envMapIntensity: 1,
             })
         default:
-            return new THREE.MeshStandardMaterial({ 
+            return new THREE.MeshStandardMaterial({
                 color: 0x808080,
                 roughness: 0.6,
-                metalness: 0.4
+                metalness: 0.4,
             })
     }
 }
@@ -78,7 +78,7 @@ export const ThreeViewer: React.FC<ThreeViewerProps> = ({
     currentMaterial,
     onModelLoaded,
     adaptiveCamera = true,
-    maxModelScale = 1
+    maxModelScale = 1,
 }) => {
     // State to track model details for adaptive rendering
     const [modelDetails, setModelDetails] = useState<{
@@ -88,12 +88,13 @@ export const ThreeViewer: React.FC<ThreeViewerProps> = ({
     } | null>(null)
 
     // Memoize material creation to prevent unnecessary re-renders
-    const material = useMemo(() => createMaterial(currentMaterial as MaterialType), [currentMaterial])
+    const material = useMemo(
+        () => createMaterial(currentMaterial as MaterialType),
+        [currentMaterial],
+    )
 
     // Memoize background color to prevent unnecessary updates
-    const backgroundColor = useMemo(() => 
-        isDarkMode ? '#1a1a1a' : '#f0f0f0'
-    , [isDarkMode])
+    const backgroundColor = useMemo(() => (isDarkMode ? '#1a1a1a' : '#f0f0f0'), [isDarkMode])
 
     // Calculate floor size based on model dimensions
     const floorSize = useMemo(() => {
@@ -111,7 +112,7 @@ export const ThreeViewer: React.FC<ThreeViewerProps> = ({
         setModelDetails({
             x: details.sizeX,
             y: details.sizeY,
-            z: details.sizeZ
+            z: details.sizeZ,
         })
         if (onModelLoaded) {
             onModelLoaded(details)
@@ -119,61 +120,59 @@ export const ThreeViewer: React.FC<ThreeViewerProps> = ({
     }
 
     return (
-        <div style={{ 
-            width: '100%', 
-            height: '100%', 
-            overflow: 'hidden'
-        }}>
-            <Canvas 
-                className='max-h-screen'
-                style={{ 
-                    width: '100%', 
+        <div
+            style={{
+                width: '100%',
+                height: '100%',
+                overflow: 'hidden',
+            }}
+        >
+            <Canvas
+                className="max-h-screen"
+                style={{
+                    width: '100%',
                     height: '100%',
                 }}
-                gl={{ 
+                gl={{
                     preserveDrawingBuffer: true,
                     antialias: true,
-                    powerPreference: 'high-performance'
+                    powerPreference: 'high-performance',
                 }}
-                camera={{ 
-                    fov: 45, 
-                    near: 5, 
+                camera={{
+                    fov: 45,
+                    near: 5,
                     far: 5000,
-                    position: adaptiveCamera && modelDetails 
-                        ? calculateCameraPosition(modelDetails) 
-                        : [10, 10, 10]
+                    position:
+                        adaptiveCamera && modelDetails
+                            ? calculateCameraPosition(modelDetails)
+                            : [10, 10, 10],
                 }}
                 performance={{
-                    min: 0.5 // Lower bound for performance
+                    min: 0.5, // Lower bound for performance
                 }}
             >
                 <AspectRatioManager />
                 <color attach="background" args={[backgroundColor]} />
-                <PerspectiveCamera 
-                    makeDefault 
-                    fov={45} 
-                    near={5} 
-                    far={5000} 
-                    position={[10, 10, 10]} 
+                <PerspectiveCamera
+                    makeDefault
+                    fov={45}
+                    near={5}
+                    far={5000}
+                    position={[10, 10, 10]}
                 />
                 <CameraController />
-                <Lights 
-                    isDarkMode={isDarkMode} 
-                    modelSize={modelDetails || undefined} 
-                />
-               
+                <Lights isDarkMode={isDarkMode} modelSize={modelDetails || undefined} />
+
                 <EnhancedAxesHelper />
-                <GridFloor 
-                    size={floorSize} 
-                    divisions={Math.floor(floorSize / 1)} 
-                />
+                <GridFloor size={floorSize} divisions={Math.floor(floorSize / 1)} />
                 <Suspense
-                    fallback={<LoadingPlaceholder color={isDarkMode ? '#ffffff' : '#000000'} />}>
+                    fallback={<LoadingPlaceholder color={isDarkMode ? '#ffffff' : '#000000'} />}
+                >
                     {objUrl && (
-                        <Model 
+                        <Model
                             key={objUrl} // Force re-render on URL change
-                            url={objUrl} 
-                            material={material} 
+                            url={objUrl}
+                            material={material}
                             onModelLoaded={handleModelLoaded}
                             maxScale={maxModelScale}
                         />
@@ -185,14 +184,14 @@ export const ThreeViewer: React.FC<ThreeViewerProps> = ({
 }
 
 // Utility function to calculate adaptive camera position
-const calculateCameraPosition = (modelDetails: { 
-    x: number, 
-    y: number, 
-    z: number 
+const calculateCameraPosition = (modelDetails: {
+    x: number
+    y: number
+    z: number
 }): [number, number, number] => {
     const maxDimension = Math.max(modelDetails.x, modelDetails.y, modelDetails.z)
     const baseDistance = Math.max(3, maxDimension * 1.5)
-    
+
     return [baseDistance, baseDistance, baseDistance]
 }
 

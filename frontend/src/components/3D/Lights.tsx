@@ -3,12 +3,12 @@ import * as THREE from 'three'
 
 interface LightsProps {
     isDarkMode?: boolean
-    modelSize?: { x: number, y: number, z: number }
+    modelSize?: { x: number; y: number; z: number }
 }
 
-export const Lights: React.FC<LightsProps> = ({ 
-    isDarkMode = false, 
-    modelSize = { x: 1, y: 1, z: 1 } 
+export const Lights: React.FC<LightsProps> = ({
+    isDarkMode = false,
+    modelSize = { x: 1, y: 1, z: 1 },
 }) => {
     // Adaptive light parameters based on model size
     const lightParams = useMemo(() => {
@@ -33,22 +33,22 @@ export const Lights: React.FC<LightsProps> = ({
             ambientLightIntensity,
             directLightIntensity,
             hemisphereLightIntensity,
-            groundColor
+            groundColor,
         }
     }, [isDarkMode, modelSize])
 
     return (
         <>
             {/* Adaptive ambient light */}
-            <ambientLight 
-                color={isDarkMode ? lightParams.darkColor : lightParams.baseColor} 
-                intensity={lightParams.ambientLightIntensity} 
+            <ambientLight
+                color={isDarkMode ? lightParams.darkColor : lightParams.baseColor}
+                intensity={lightParams.ambientLightIntensity}
             />
 
             {/* Primary directional light with adaptive positioning */}
-            <directionalLight 
-                position={[10, 10, 10]} 
-                intensity={lightParams.directLightIntensity} 
+            <directionalLight
+                position={[10, 10, 10]}
+                intensity={lightParams.directLightIntensity}
                 color={lightParams.baseColor}
                 castShadow
                 shadow-mapSize-width={2048}
@@ -62,17 +62,17 @@ export const Lights: React.FC<LightsProps> = ({
             />
 
             {/* Secondary directional light from opposite angle */}
-            <directionalLight 
-                position={[-5, 5, -5]} 
-                intensity={lightParams.directLightIntensity * 0.8} 
+            <directionalLight
+                position={[-5, 5, -5]}
+                intensity={lightParams.directLightIntensity * 0.8}
                 color={lightParams.baseColor}
             />
 
             {/* Soft fill light with adaptive intensity */}
-            <hemisphereLight 
-                color={isDarkMode ? lightParams.darkColor : lightParams.baseColor} 
-                groundColor={lightParams.groundColor} 
-                intensity={lightParams.hemisphereLightIntensity} 
+            <hemisphereLight
+                color={isDarkMode ? lightParams.darkColor : lightParams.baseColor}
+                groundColor={lightParams.groundColor}
+                intensity={lightParams.hemisphereLightIntensity}
             />
         </>
     )

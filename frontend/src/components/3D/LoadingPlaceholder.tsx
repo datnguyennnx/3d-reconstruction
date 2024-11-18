@@ -1,5 +1,5 @@
 import React from 'react'
-import { Color } from 'three'
+import { type Color } from 'three'
 
 interface LoadingPlaceholderProps {
     size?: [number, number, number]

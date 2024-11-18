@@ -28,9 +28,7 @@ export const Logo: React.FC<LogoProps> = ({ hasText = false, type }) => {
         <div className="h-8 w-8 flex items-center justify-center">
             <SvgContent />
             {hasText && (
-                <div className="text-white text-2xl tracking-wide ml-3 font-semibold">
-                    {text}
-                </div>
+                <div className="text-white text-2xl tracking-wide ml-3 font-semibold">{text}</div>
             )}
         </div>
     )

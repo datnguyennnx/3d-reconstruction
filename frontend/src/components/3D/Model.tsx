@@ -2,14 +2,14 @@ import React, { useEffect, useRef, useMemo, useState } from 'react'
 import * as THREE from 'three'
 import { useLoader, useFrame, useThree } from '@react-three/fiber'
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js'
-import { ModelProps, ModelDetails } from './types'
+import { type ModelProps, type ModelDetails } from './types'
 
-export const Model: React.FC<ModelProps & { onModelLoaded?: (details: ModelDetails) => void }> = ({ 
-    url, 
-    material, 
+export const Model: React.FC<ModelProps & { onModelLoaded?: (details: ModelDetails) => void }> = ({
+    url,
+    material,
     onModelLoaded,
     maxScale = 1,
-    centerModel = true
+    centerModel = true,
 }) => {
     const modelRef = useRef<THREE.Group>(null)
     const { camera } = useThree()
@@ -18,8 +18,8 @@ export const Model: React.FC<ModelProps & { onModelLoaded?: (details: ModelDetai
     const [loadError, setLoadError] = useState<string | null>(null)
 
     const obj = useLoader(
-        OBJLoader, 
-        url, 
+        OBJLoader,
+        url,
         (loader) => {
             loader.setPath('') // Ensure correct path resolution
         },
@@ -27,7 +27,7 @@ export const Model: React.FC<ModelProps & { onModelLoaded?: (details: ModelDetai
             console.error('Model loading error:', error)
             setLoadError('Failed to load 3D model')
             setIsLoading(false)
-        }
+        },
     )
 
     // Comprehensive model geometry analysis
@@ -37,12 +37,8 @@ export const Model: React.FC<ModelProps & { onModelLoaded?: (details: ModelDetai
             const size = boundingBox.getSize(new THREE.Vector3())
             const center = boundingBox.getCenter(new THREE.Vector3())
 
-            const { 
-                lowestPoint, 
-                highestPoint,
-                worldVertices,
-                averageSize
-            } = calculateModelGeometry(obj)
+            const { lowestPoint, highestPoint, worldVertices, averageSize } =
+                calculateModelGeometry(obj)
 
             return {
                 boundingBox,
@@ -53,7 +49,7 @@ export const Model: React.FC<ModelProps & { onModelLoaded?: (details: ModelDetai
                 lowestPoint,
                 highestPoint,
                 worldVertices,
-                averageSize
+                averageSize,
             }
         } catch (error) {
             console.error('Model geometry calculation error:', error)
@@ -66,20 +62,24 @@ export const Model: React.FC<ModelProps & { onModelLoaded?: (details: ModelDetai
                 lowestPoint: 0,
                 highestPoint: 0,
                 worldVertices: [],
-                averageSize: 1
+                averageSize: 1,
             }
         }
     }, [obj])
 
     // Intelligent scaling and positioning
     const { scaleFactor, cameraDistance, verticalOffset, horizontalOffset } = useMemo(() => {
-        const maxDimension = Math.max(modelGeometry.size.x, modelGeometry.size.y, modelGeometry.size.z)
-        
+        const maxDimension = Math.max(
+            modelGeometry.size.x,
+            modelGeometry.size.y,
+            modelGeometry.size.z,
+        )
+
         // Ultra-conservative scaling
         const targetSize = 0.75 // Reduced from 1.5
         const baseScale = maxDimension > 0 ? targetSize / maxDimension : 1
         const scale = Math.min(baseScale, maxScale)
-        
+
         // Minimal camera distance
         const distance = Math.max(2, maxDimension * 0.8)
 
@@ -91,25 +91,21 @@ export const Model: React.FC<ModelProps & { onModelLoaded?: (details: ModelDetai
         const horizontalXOffset = modelGeometry.center.x * scale
         const horizontalZOffset = modelGeometry.center.z * scale
 
-        return { 
+        return {
             scaleFactor: scale,
             cameraDistance: distance,
             verticalOffset: vertOffset,
             horizontalOffset: {
                 x: horizontalXOffset,
-                z: horizontalZOffset
-            }
+                z: horizontalZOffset,
+            },
         }
     }, [modelGeometry, maxScale])
 
     // Update camera position when model loads
     useEffect(() => {
         if (!isLoading) {
-            camera.position.set(
-                cameraDistance, 
-                cameraDistance, 
-                cameraDistance
-            )
+            camera.position.set(cameraDistance, cameraDistance, cameraDistance)
             camera.lookAt(0, 0, 0)
         }
     }, [isLoading, cameraDistance, camera])
@@ -127,7 +123,7 @@ export const Model: React.FC<ModelProps & { onModelLoaded?: (details: ModelDetai
     useEffect(() => {
         if (modelRef.current && !loadError) {
             setIsLoading(true)
-            
+
             try {
                 const group = new THREE.Group()
                 const clonedObj = obj.clone()
@@ -149,11 +145,11 @@ export const Model: React.FC<ModelProps & { onModelLoaded?: (details: ModelDetai
                         if (material) {
                             child.material = material
                         }
-                        
+
                         // Rendering properties
                         child.castShadow = true
                         child.receiveShadow = true
-                        
+
                         // Geometry optimization
                         if (child.geometry) {
                             child.geometry.computeVertexNormals()
@@ -175,7 +171,7 @@ export const Model: React.FC<ModelProps & { onModelLoaded?: (details: ModelDetai
                         triangles: modelGeometry.triangles,
                         sizeX: modelGeometry.size.x,
                         sizeY: modelGeometry.size.y,
-                        sizeZ: modelGeometry.size.z
+                        sizeZ: modelGeometry.size.z,
                     })
                 }
 
@@ -186,15 +182,15 @@ export const Model: React.FC<ModelProps & { onModelLoaded?: (details: ModelDetai
             }
         }
     }, [
-        obj, 
-        material, 
-        modelGeometry, 
-        scaleFactor, 
-        onModelLoaded, 
-        loadError, 
-        centerModel, 
+        obj,
+        material,
+        modelGeometry,
+        scaleFactor,
+        onModelLoaded,
+        loadError,
+        centerModel,
         verticalOffset,
-        horizontalOffset
+        horizontalOffset,
     ])
 
     // Error state rendering
@@ -217,10 +213,12 @@ export const Model: React.FC<ModelProps & { onModelLoaded?: (details: ModelDetai
 }
 
 // Advanced model geometry calculation
-const calculateModelGeometry = (obj: THREE.Group): {
-    lowestPoint: number,
-    highestPoint: number,
-    worldVertices: THREE.Vector3[],
+const calculateModelGeometry = (
+    obj: THREE.Group,
+): {
+    lowestPoint: number
+    highestPoint: number
+    worldVertices: THREE.Vector3[]
     averageSize: number
 } => {
     const worldVertices: THREE.Vector3[] = []
@@ -232,14 +230,14 @@ const calculateModelGeometry = (obj: THREE.Group): {
     obj.traverse((child: THREE.Object3D) => {
         if (child instanceof THREE.Mesh && child.geometry) {
             const positionAttribute = child.geometry.getAttribute('position')
-            
+
             for (let i = 0; i < positionAttribute.count; i++) {
                 const vertex = new THREE.Vector3(
                     positionAttribute.getX(i),
                     positionAttribute.getY(i),
-                    positionAttribute.getZ(i)
+                    positionAttribute.getZ(i),
                 )
-                
+
                 // Transform vertex to world coordinates
                 vertex.applyMatrix4(child.matrixWorld)
                 worldVertices.push(vertex)
@@ -259,7 +257,7 @@ const calculateModelGeometry = (obj: THREE.Group): {
         lowestPoint: lowestY === Infinity ? 0 : lowestY,
         highestPoint: highestY === -Infinity ? 0 : highestY,
         worldVertices,
-        averageSize: vertexCount > 0 ? totalVertexSize / vertexCount : 1
+        averageSize: vertexCount > 0 ? totalVertexSize / vertexCount : 1,
     }
 }
 
@@ -284,8 +282,8 @@ const calculateTotalTriangles = (obj: THREE.Group): number => {
         let totalTriangles = 0
         obj.traverse((child: THREE.Object3D) => {
             if (child instanceof THREE.Mesh && child.geometry) {
-                totalTriangles += child.geometry.index 
-                    ? child.geometry.index.count / 3 
+                totalTriangles += child.geometry.index
+                    ? child.geometry.index.count / 3
                     : child.geometry.attributes.position.count / 3
             }
         })

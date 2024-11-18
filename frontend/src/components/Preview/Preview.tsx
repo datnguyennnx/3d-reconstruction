@@ -2,8 +2,8 @@ import React, { useState } from 'react'
 import { ThreeViewer } from '@/components/3D'
 import { MenuBar } from './MenuBar'
 import { DetailsPanel } from './DetailsPanel'
-import { PreviewProps } from './types'
-import { ModelDetails, MaterialType } from '@/components/3D/types'
+import { type PreviewProps } from './types'
+import { type ModelDetails, type MaterialType } from '@/components/3D/types'
 
 export const Preview: React.FC<PreviewProps> = ({
     objUrl,
@@ -16,7 +16,9 @@ export const Preview: React.FC<PreviewProps> = ({
     currentMaterial,
     onChangeMaterial,
 }) => {
-    const [localModelDetails, setLocalModelDetails] = useState<ModelDetails | null>(modelDetails || null)
+    const [localModelDetails, setLocalModelDetails] = useState<ModelDetails | null>(
+        modelDetails || null,
+    )
 
     const handleModelLoaded = (details: ModelDetails) => {
         setLocalModelDetails(details)
@@ -26,8 +28,16 @@ export const Preview: React.FC<PreviewProps> = ({
     }
 
     // Ensure currentMaterial is of MaterialType
-    const safeMaterial: MaterialType = ['basic', 'normal', 'phong', 'standard', 'wireframe', 'transparent', 'custom'].includes(currentMaterial as MaterialType) 
-        ? currentMaterial as MaterialType 
+    const safeMaterial: MaterialType = [
+        'basic',
+        'normal',
+        'phong',
+        'standard',
+        'wireframe',
+        'transparent',
+        'custom',
+    ].includes(currentMaterial as MaterialType)
+        ? (currentMaterial as MaterialType)
         : 'standard'
 
     return (

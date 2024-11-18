@@ -1,14 +1,12 @@
 import React from 'react'
-import { DetailsPanelProps } from './types'
+import { type DetailsPanelProps } from './types'
 
 export const DetailsPanel: React.FC<DetailsPanelProps> = ({ modelDetails }) => {
     if (!modelDetails) return null
 
     // Helper function to format large numbers
     const formatNumber = (num: number) => {
-        return num >= 1000 
-            ? `${(num / 1000).toFixed(1)}K` 
-            : num.toLocaleString()
+        return num >= 1000 ? `${(num / 1000).toFixed(1)}K` : num.toLocaleString()
     }
 
     return (
@@ -19,13 +17,17 @@ export const DetailsPanel: React.FC<DetailsPanelProps> = ({ modelDetails }) => {
             <div className="space-y-3">
                 <div className="grid grid-cols-2 gap-2">
                     <div className="bg-gray-100 dark:bg-gray-900 p-3 rounded-md">
-                        <span className="block text-xs text-gray-600 dark:text-gray-400 mb-1">Vertices</span>
+                        <span className="block text-xs text-gray-600 dark:text-gray-400 mb-1">
+                            Vertices
+                        </span>
                         <span className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                             {formatNumber(modelDetails.vertices)}
                         </span>
                     </div>
                     <div className="bg-gray-100 dark:bg-gray-900 p-3 rounded-md">
-                        <span className="block text-xs text-gray-600 dark:text-gray-400 mb-1">Triangles</span>
+                        <span className="block text-xs text-gray-600 dark:text-gray-400 mb-1">
+                            Triangles
+                        </span>
                         <span className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                             {formatNumber(modelDetails.triangles)}
                         </span>
@@ -37,15 +39,17 @@ export const DetailsPanel: React.FC<DetailsPanelProps> = ({ modelDetails }) => {
                     </span>
                     <div className="grid grid-cols-3 gap-2">
                         {['X', 'Y', 'Z'].map((axis, index) => (
-                            <div 
-                                key={axis} 
+                            <div
+                                key={axis}
                                 className="bg-gray-100 dark:bg-gray-900 p-2 rounded-md text-center"
                             >
                                 <span className="block text-xs text-gray-600 dark:text-gray-400 mb-1">
                                     {axis}
                                 </span>
                                 <span className="text-sm text-gray-900 dark:text-gray-100">
-                                    {[modelDetails.sizeX, modelDetails.sizeY, modelDetails.sizeZ][index].toFixed(2)}
+                                    {[modelDetails.sizeX, modelDetails.sizeY, modelDetails.sizeZ][
+                                        index
+                                    ].toFixed(2)}
                                 </span>
                             </div>
                         ))}
