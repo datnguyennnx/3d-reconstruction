@@ -10,11 +10,9 @@ import { ImageData } from '@/components/Preview/types'
 export default function Index() {
     const initialMessage = 'Hi there. May I help you with anything?'
 
-    const [images, setImages] = useState<ImageData[]>([
-        // ... your initial images here
-    ])
+    const [images, setImages] = useState<ImageData[]>([])
     const [selectedImage, setSelectedImage] = useState(0)
-    const [objUrl, setObjUrl] = useState<string>('')
+    const [objUrl, setObjUrl] = useState<string>('/car.obj')
     const [isDarkMode, setIsDarkMode] = useState(false)
     const [isFullScreen, setIsFullScreen] = useState(false)
     const [modelDetails, setModelDetails] = useState<ModelDetails | null>(null)
@@ -42,11 +40,18 @@ export default function Index() {
     }
 
     const handleNewImage = (imageUrl: string) => {
-        setImages((prevImages) => [...prevImages, { url: imageUrl, selected: false }])
+        const newImage: ImageData = { 
+            url: imageUrl, 
+            selected: false,
+            id: `image-${Date.now()}` 
+        }
+        setImages((prevImages) => [...prevImages, newImage])
     }
 
     const handle3DModelChange = (modelUrl: string) => {
         setObjUrl(modelUrl)
+        // Reset model details when a new model is loaded
+        setModelDetails(null)
     }
 
     const handleModelLoaded = (details: ModelDetails) => {

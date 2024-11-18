@@ -1,31 +1,40 @@
 import React from 'react'
-import { Grid } from '@react-three/drei'
+import * as THREE from 'three'
 
 interface GridFloorProps {
-    cellColor?: string
-    sectionColor?: string
-    isDarkMode?: boolean
+    size?: number
+    divisions?: number
+    colorCenterLine?: number
+    colorGrid?: number
 }
 
 export const GridFloor: React.FC<GridFloorProps> = ({
-    cellColor = '#6f6f6f',
-    sectionColor = '#9d4b4b',
-    isDarkMode = false,
+    size = 10,
+    divisions = 10,
+    colorCenterLine = 0x444444,
+    colorGrid = 0x1f1f1f
 }) => {
     return (
-        <Grid
-            args={[15, 15]}
-            cellSize={1}
-            cellThickness={1}
-            cellColor={isDarkMode ? cellColor : cellColor}
-            sectionSize={5}
-            sectionThickness={1}
-            sectionColor={isDarkMode ? sectionColor : sectionColor}
-            fadeDistance={15}
-            fadeStrength={1}
-            followCamera={false}
-            position={[0.05, 0, 0]}
-        />
+        <>
+            <gridHelper 
+                args={[size, divisions, colorCenterLine, colorGrid]} 
+                position={[0, 0, 0]} 
+            />
+            
+            <mesh 
+                position={[0, -0.02, 0]} 
+                rotation={[-Math.PI / 2, 0, 0]}
+                receiveShadow
+            >
+                <planeGeometry args={[size, size]} />
+                <meshStandardMaterial 
+                    color={0xcccccc} 
+                    transparent 
+                    opacity={0.5} 
+                    side={THREE.DoubleSide}
+                />
+            </mesh>
+        </>
     )
 }
 

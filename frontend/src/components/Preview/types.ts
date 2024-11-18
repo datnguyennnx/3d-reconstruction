@@ -1,18 +1,15 @@
-import { Dispatch, SetStateAction } from 'react'
 import { ModelDetails } from '@/components/3D/types'
 
 export interface ImageData {
+    id?: string
     url: string
-    selected: boolean
-}
-
-export interface SingleImageProps {
-    imageUrl: string
-    isDarkMode: boolean
+    name?: string
+    type?: string
+    selected?: boolean
 }
 
 export interface DetailsPanelProps {
-    modelDetails: ModelDetails
+    modelDetails?: ModelDetails
 }
 
 export interface PreviewProps {
@@ -21,8 +18,8 @@ export interface PreviewProps {
     toggleDarkMode: () => void
     toggleFullScreen: () => void
     isFullScreen: boolean
-    onModelLoaded: (details: ModelDetails) => void
-    modelDetails: ModelDetails | null
+    onModelLoaded?: (details: ModelDetails) => void
+    modelDetails?: ModelDetails | null
     currentMaterial: string
     onChangeMaterial: (material: string) => void
 }
