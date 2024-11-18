@@ -50,10 +50,10 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
             const formData = new FormData()
             formData.append('file', file)
 
-            const response = await fetch('http://localhost:8000/api/remove-background', {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/remove-background`, {
                 method: 'POST',
-                body: formData,
-            })
+                // Additional configuration as needed
+            });
 
             if (!response.ok) {
                 throw new Error('Failed to process image')
@@ -106,7 +106,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
             setMessages((prev) => [...prev, aiResponseMessage])
 
             // Send message to backend
-            const response = await fetch('http://localhost:8000/api/chat/stream', {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/chat/stream`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -207,7 +207,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                 },
             ])
         }
-    }
+    };
 
     return (
         <div className={`w-full h-full flex flex-col border-2 bg-white rounded-lg overflow-hidden`}>
@@ -254,5 +254,5 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                 </div>
             </div>
         </div>
-    )
+    );
 }

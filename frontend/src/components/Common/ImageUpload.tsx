@@ -55,10 +55,10 @@ export const ImageUpload = ({
             formData.append('file', file)
 
             // Send request to backend for background removal
-            const response = await fetch('http://localhost:8000/api/remove-background', {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/remove-background`, {
                 method: 'POST',
-                body: formData,
-            })
+                body: formData
+            });
 
             if (!response.ok) {
                 throw new Error('Failed to process image')
