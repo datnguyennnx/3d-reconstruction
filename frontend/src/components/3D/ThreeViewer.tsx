@@ -17,8 +17,8 @@ export const ThreeViewer: React.FC<ThreeViewerProps> = ({
     const material = createMaterial(currentMaterial)
 
     return (
-        <div style={{ width: '100%', height: '100%', position: 'relative' }}>
-            <Canvas style={{ width: '100%', height: '100%' }}>
+        <div style={{ width: '100%'}}>
+            <Canvas className='max-h-screen'>
                 <color attach="background" args={[isDarkMode ? '#1a1a1a' : '#f0f0f0']} />
                 <PerspectiveCamera makeDefault position={[3, 3, 3]} />
                 <CameraController />

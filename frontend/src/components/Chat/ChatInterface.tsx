@@ -242,7 +242,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
     return (
         <div className={`w-full h-full flex flex-col border-2 bg-white rounded-lg overflow-hidden`}>
-            <div className="h-[calc(100vh-11rem)] overflow-y-auto p-8 no-scrollbar">
+            <div className="h-full overflow-y-auto p-8 no-scrollbar">
                 {messages.map((message, index) => (
                     <ChatRow
                         key={index}
@@ -282,17 +282,6 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                         maxSize={5}
                         className="bg-white shadow-lg"
                     />
-                </div>
-            </div>
-
-            <div className={`px-6 py-2 space-x-4 text-sm flex items-center`}>
-                <div className="flex items-center">
-                    <Dot status={isConnected} />
-                    <p>Connection</p>
-                </div>
-                <div className="flex items-center">
-                    <Dot status={isLoading} />
-                    <p>Generating</p>
                 </div>
             </div>
         </div>

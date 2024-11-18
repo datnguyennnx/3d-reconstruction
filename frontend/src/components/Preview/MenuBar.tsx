@@ -33,8 +33,8 @@ export const MenuBar: React.FC<MenuBarProps> = ({
     onShowDetails,
     onChangeMaterial,
 }) => {
-    const buttonClass = `rounded-md p-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all duration-200 ease-in-out hover:bg-gray-200 dark:hover:bg-gray-700`
-    const activeButtonClass = `${buttonClass} bg-gray-200 dark:bg-gray-900 text-black dark:text-white`
+    const buttonClass = `rounded-md p-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all duration-200 ease-in-out hover:bg-gray-200 dark:hover:bg-gray-200`
+    const activeButtonClass = `${buttonClass} bg-gray-200 dark:bg-gray-700 text-black dark:text-white`
     const inactiveButtonClass = `${buttonClass} ${
         isDarkMode ? 'bg-black text-white' : 'bg-white text-black'
     }`
@@ -63,22 +63,22 @@ export const MenuBar: React.FC<MenuBarProps> = ({
                         } p-1.5 rounded-md shadow-lg`}>
                         <DropdownMenuItem
                             onClick={() => onChangeMaterial('basic')}
-                            className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 px-2 py-1 rounded">
+                            className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-200 px-2 py-1 rounded">
                             Basic
                         </DropdownMenuItem>
                         <DropdownMenuItem
                             onClick={() => onChangeMaterial('normal')}
-                            className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 px-2 py-1 rounded">
+                            className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-200 px-2 py-1 rounded">
                             Normal
                         </DropdownMenuItem>
                         <DropdownMenuItem
                             onClick={() => onChangeMaterial('phong')}
-                            className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 px-2 py-1 rounded">
+                            className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-200 px-2 py-1 rounded">
                             Phong
                         </DropdownMenuItem>
                         <DropdownMenuItem
                             onClick={() => onChangeMaterial('standard')}
-                            className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 px-2 py-1 rounded">
+                            className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-200 px-2 py-1 rounded">
                             Standard
                         </DropdownMenuItem>
                     </DropdownMenuContent>

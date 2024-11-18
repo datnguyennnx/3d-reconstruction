@@ -14,12 +14,12 @@ interface CameraControllerProps {
 
 export const CameraController: React.FC<CameraControllerProps> = ({
     enableDamping = true,
-    dampingFactor = 0.05,
+    dampingFactor = 0.1,
     rotateSpeed = 0.5,
     zoomSpeed = 0.75,
-    panSpeed = 0.5,
+    panSpeed = 0.75,
     minDistance = 1,
-    maxDistance = 100,
+    maxDistance = 200,
 }) => {
     return (
         <OrbitControls

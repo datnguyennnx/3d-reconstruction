@@ -68,7 +68,7 @@ export default function Index() {
                         on3DModelChange={handle3DModelChange}
                     />
                 </div>
-                <div className={`w-1/2 h-full`} ref={fullScreenRef}>
+                <div className={`w-1/2 max-h-screen`} ref={fullScreenRef}>
                     <Preview
                         objUrl={objUrl}
                         isDarkMode={isDarkMode}
