@@ -4,6 +4,7 @@ from fastapi.responses import StreamingResponse, JSONResponse
 from typing import Optional
 from core.dify_client import dify_client
 from pydantic import BaseModel
+import json
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -30,12 +31,20 @@ async def stream_chat_get(
                     user_id=user_id,
                     conversation_id=conversation_id
                 ):
-                    yield f"data: {chunk}\n\n"
+                    # Validate chunk is valid JSON before yielding
+                    try:
+                        json.loads(chunk)
+                        yield f"data: {chunk}\n\n"
+                    except json.JSONDecodeError:
+                        logger.warning(f"Invalid JSON chunk: {chunk}")
 
             except Exception as e:
                 logger.error(f"Error in chat stream: {str(e)}")
-                error_event = f"data: {{\"event\": \"error\", \"message\": \"{str(e)}\"}}\n\n"
-                yield error_event
+                error_event = json.dumps({
+                    "event": "error", 
+                    "message": str(e)
+                })
+                yield f"data: {error_event}\n\n"
 
         return StreamingResponse(
             generate(),
@@ -75,12 +84,20 @@ async def stream_chat_post(request: Request):
                     user_id=user_id,
                     conversation_id=conversation_id
                 ):
-                    yield f"data: {chunk}\n\n"
+                    # Validate chunk is valid JSON before yielding
+                    try:
+                        json.loads(chunk)
+                        yield f"data: {chunk}\n\n"
+                    except json.JSONDecodeError:
+                        logger.warning(f"Invalid JSON chunk: {chunk}")
 
             except Exception as e:
                 logger.error(f"Error in chat stream: {str(e)}")
-                error_event = f"data: {{\"event\": \"error\", \"message\": \"{str(e)}\"}}\n\n"
-                yield error_event
+                error_event = json.dumps({
+                    "event": "error", 
+                    "message": str(e)
+                })
+                yield f"data: {error_event}\n\n"
 
         return StreamingResponse(
             generate(),

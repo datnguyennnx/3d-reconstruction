@@ -1,54 +1,27 @@
-import React, { Suspense, useMemo, useState } from 'react'
-import { Canvas, useThree } from '@react-three/fiber'
-import { PerspectiveCamera } from '@react-three/drei'
+import React, { Suspense, useState, useCallback, useRef } from 'react'
+import { Canvas } from '@react-three/fiber'
+import { OrbitControls } from '@react-three/drei'
 import { Model } from './Model'
-import { GridFloor } from './GridFloor'
 import { Lights } from './Lights'
-import { CameraController } from './CameraController'
+import { AdaptiveCamera } from './CameraController'
 import { LoadingPlaceholder } from './LoadingPlaceholder'
-import { type ThreeViewerProps, type MaterialType, type ModelDetails } from './types'
+import { DetailsPanel } from '../Preview/DetailsPanel'
+import { 
+    type ThreeViewerProps, 
+    type MaterialType, 
+    type ModelDetails, 
+    type CameraConfig
+} from './types'
 import * as THREE from 'three'
 
-// Aspect Ratio Enforcer Component
-const AspectRatioManager = React.memo(() => {
-    const { camera, size } = useThree()
-
-    React.useEffect(() => {
-        const aspectRatio = 16 / 9
-
-        // Type assertion to PerspectiveCamera
-        if (camera instanceof THREE.PerspectiveCamera) {
-            camera.aspect = aspectRatio
-            camera.updateProjectionMatrix()
-        }
-    }, [camera, size])
-
-    return null
-})
-AspectRatioManager.displayName = 'AspectRatioManager'
-
-// Enhanced Axes Helper
-const EnhancedAxesHelper = React.memo(() => {
-    return (
-        <group>
-            <axesHelper args={[5]} />
-        </group>
-    )
-})
-EnhancedAxesHelper.displayName = 'EnhancedAxesHelper'
-
-// Material creation utility
+// Simplified material creation function
 const createMaterial = (materialType: MaterialType): THREE.Material => {
     switch (materialType) {
-        case 'basic':
-            return new THREE.MeshBasicMaterial({
+        case 'metal':
+            return new THREE.MeshStandardMaterial({
                 color: 0x808080,
-                transparent: true,
-                opacity: 0.8,
-            })
-        case 'normal':
-            return new THREE.MeshNormalMaterial({
-                flatShading: true,
+                roughness: 0.2,
+                metalness: 0.8,
             })
         case 'phong':
             return new THREE.MeshPhongMaterial({
@@ -56,12 +29,9 @@ const createMaterial = (materialType: MaterialType): THREE.Material => {
                 shininess: 30,
                 specular: 0x111111,
             })
-        case 'standard':
-            return new THREE.MeshStandardMaterial({
-                color: 0x808080,
-                roughness: 0.5,
-                metalness: 0.5,
-                envMapIntensity: 1,
+        case 'normal':
+            return new THREE.MeshNormalMaterial({
+                flatShading: true,
             })
         default:
             return new THREE.MeshStandardMaterial({
@@ -75,105 +45,107 @@ const createMaterial = (materialType: MaterialType): THREE.Material => {
 export const ThreeViewer: React.FC<ThreeViewerProps> = ({
     objUrl,
     isDarkMode,
-    currentMaterial,
+    currentMaterial = 'default',
     onModelLoaded,
     adaptiveCamera = true,
     maxModelScale = 1,
+    cameraConfig = {},
+    modelDetails: initialModelDetails
 }) => {
-    // State to track model details for adaptive rendering
-    const [modelDetails, setModelDetails] = useState<{
-        x: number
-        y: number
-        z: number
-    } | null>(null)
+    // Stable references for callbacks
+    const onModelLoadedRef = useRef(onModelLoaded)
+    onModelLoadedRef.current = onModelLoaded
 
-    // Memoize material creation to prevent unnecessary re-renders
-    const material = useMemo(
-        () => createMaterial(currentMaterial as MaterialType),
-        [currentMaterial],
+    // State management
+    const [modelDetails, setModelDetails] = useState<ModelDetails | null>(
+        initialModelDetails || null
     )
-
-    // Memoize background color to prevent unnecessary updates
-    const backgroundColor = useMemo(() => (isDarkMode ? '#1a1a1a' : '#f0f0f0'), [isDarkMode])
-
-    // Calculate floor size based on model dimensions
-    const floorSize = useMemo(() => {
-        if (modelDetails) {
-            // Make floor 2-3 times larger than the largest model dimension
-            const maxDimension = Math.max(modelDetails.x, modelDetails.y, modelDetails.z)
-            return Math.max(10, maxDimension * 2.5)
+    
+    const [modelLoadProgress, setModelLoadProgress] = useState(0)
+    const [modelLoadError, setModelLoadError] = useState<string | null>(null)
+    
+    // Material and background color
+    const material = createMaterial(currentMaterial)
+    const backgroundColor = isDarkMode ? '#1a1a1a' : '#f0f0f0'
+    
+    // Stable callbacks
+    const handleModelLoaded = useCallback((details: ModelDetails) => {
+        setModelDetails(details)
+        setModelLoadError(null)
+        setModelLoadProgress(100)
+        
+        if (onModelLoadedRef.current) {
+            onModelLoadedRef.current(details)
         }
-        return 10 // Default size
-    }, [modelDetails])
-
-    // Handle model loaded callback
-    const handleModelLoaded = (details: ModelDetails) => {
-        // Convert model details to the format expected by Lights
-        setModelDetails({
-            x: details.sizeX,
-            y: details.sizeY,
-            z: details.sizeZ,
-        })
-        if (onModelLoaded) {
-            onModelLoaded(details)
-        }
-    }
+    }, [])
+    
+    const handleModelLoadProgress = useCallback((progress: number) => {
+        setModelLoadProgress(progress)
+    }, [])
+    
+    const handleModelLoadError = useCallback((error: string) => {
+        setModelLoadError(error)
+        setModelLoadProgress(0)
+    }, [])
+    
+    // Floor size calculation
+    const floorSize = modelDetails 
+        ? Math.max(10, Math.max(modelDetails.sizeX, modelDetails.sizeY, modelDetails.sizeZ) * 2.5)
+        : 10
 
     return (
-        <div
-            style={{
-                width: '100%',
-                height: '100%',
-                overflow: 'hidden',
-            }}
-        >
+        <div className="relative w-full h-full overflow-hidden">
+            {modelDetails && (
+                <DetailsPanel modelDetails={modelDetails} />
+            )}
             <Canvas
-                className="max-h-screen"
-                style={{
-                    width: '100%',
-                    height: '100%',
-                }}
+                key={objUrl} // Force re-render on URL change
+                className="w-full h-full"
                 gl={{
                     preserveDrawingBuffer: true,
                     antialias: true,
                     powerPreference: 'high-performance',
                 }}
-                camera={{
-                    fov: 45,
-                    near: 5,
-                    far: 5000,
-                    position:
-                        adaptiveCamera && modelDetails
-                            ? calculateCameraPosition(modelDetails)
-                            : [10, 10, 10],
-                }}
                 performance={{
-                    min: 0.5, // Lower bound for performance
+                    min: 0.5,
                 }}
             >
-                <AspectRatioManager />
                 <color attach="background" args={[backgroundColor]} />
-                <PerspectiveCamera
-                    makeDefault
-                    fov={45}
-                    near={5}
-                    far={5000}
-                    position={[10, 10, 10]}
+                <AdaptiveCamera 
+                    modelDetails={modelDetails} 
+                    cameraConfig={cameraConfig} 
                 />
-                <CameraController />
-                <Lights isDarkMode={isDarkMode} modelSize={modelDetails || undefined} />
-
-                <EnhancedAxesHelper />
-                <GridFloor size={floorSize} divisions={Math.floor(floorSize / 1)} />
+                <OrbitControls 
+                    enableDamping 
+                    dampingFactor={0.05}
+                    enableZoom 
+                    enablePan
+                />
+                <Lights 
+                    isDarkMode={isDarkMode}
+                    modelSize={modelDetails ? {
+                        x: modelDetails.sizeX,
+                        y: modelDetails.sizeY,
+                        z: modelDetails.sizeZ
+                    } : undefined}
+                />
                 <Suspense
-                    fallback={<LoadingPlaceholder color={isDarkMode ? '#ffffff' : '#000000'} />}
+                    fallback={
+                        <LoadingPlaceholder 
+                            progress={modelLoadProgress} 
+                            error={modelLoadError} 
+                            color={isDarkMode ? '#ffffff' : '#000000'} 
+                        />
+                    }
                 >
                     {objUrl && (
                         <Model
-                            key={objUrl} // Force re-render on URL change
+                            key={objUrl}
                             url={objUrl}
                             material={material}
                             onModelLoaded={handleModelLoaded}
+                            onProgress={handleModelLoadProgress}
+                            onError={handleModelLoadError}
                             maxScale={maxModelScale}
                         />
                     )}
@@ -181,18 +153,6 @@ export const ThreeViewer: React.FC<ThreeViewerProps> = ({
             </Canvas>
         </div>
     )
-}
-
-// Utility function to calculate adaptive camera position
-const calculateCameraPosition = (modelDetails: {
-    x: number
-    y: number
-    z: number
-}): [number, number, number] => {
-    const maxDimension = Math.max(modelDetails.x, modelDetails.y, modelDetails.z)
-    const baseDistance = Math.max(3, maxDimension * 1.5)
-
-    return [baseDistance, baseDistance, baseDistance]
 }
 
 ThreeViewer.displayName = 'ThreeViewer'

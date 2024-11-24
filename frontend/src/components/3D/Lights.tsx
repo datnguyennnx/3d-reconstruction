@@ -10,46 +10,54 @@ export const Lights: React.FC<LightsProps> = ({
     isDarkMode = false,
     modelSize = { x: 1, y: 1, z: 1 },
 }) => {
-    // Adaptive light parameters based on model size
-    const lightParams = useMemo(() => {
-        // Base light colors
-        const baseColor = 0x1d1d1d1
-        const darkColor = 0x808080
-        const groundColor = isDarkMode ? 0x404040 : 0x1d1d1d1
+    // Enhanced color palette with more nuanced colors
+    const lightColors = useMemo(() => ({
+        light: {
+            ambient: 0xffffff,     // Bright white
+            directional: 0xf0f0f0, // Soft white
+            ground: 0xe0e0e0,      // Light gray
+            shadow: 0xcccccc       // Subtle shadow tone
+        },
+        dark: {
+            ambient: 0xffffff,     // Bright white
+            directional: 0xf0f0f0, // Soft white
+            ground: 0xe0e0e0,      // Light gray
+            shadow: 0xcccccc       // Subtle shadow tone
+        }
+    }), [isDarkMode])
 
-        // Dynamic light intensity based on model size
+    // Dynamic light intensity calculation based on model size
+    const lightIntensities = useMemo(() => {
         const maxDimension = Math.max(modelSize.x, modelSize.y, modelSize.z)
-        const baseIntensity = isDarkMode ? 1 : 1.5
-        const scaleFactor = Math.min(maxDimension / 2, 5) // Cap scaling
-
-        // Increased light intensities
-        const ambientLightIntensity = baseIntensity * 0.8 * scaleFactor
-        const directLightIntensity = baseIntensity * 1.2 * scaleFactor
-        const hemisphereLightIntensity = baseIntensity * 0.5 * scaleFactor
+        
+        // Base intensities with adaptive scaling
+        const baseIntensity = isDarkMode ? 0.8 : 1.2
+        const scaleFactor = Math.min(maxDimension / 2, 5) // Cap scaling at 5
 
         return {
-            baseColor,
-            darkColor,
-            ambientLightIntensity,
-            directLightIntensity,
-            hemisphereLightIntensity,
-            groundColor,
+            ambient: baseIntensity * 0.6 * scaleFactor,
+            primary: baseIntensity * 1.0 * scaleFactor,
+            secondary: baseIntensity * 0.4 * scaleFactor,
+            hemisphere: baseIntensity * 0.5 * scaleFactor
         }
-    }, [isDarkMode, modelSize])
+    }, [modelSize, isDarkMode])
+
+    // Determine color scheme based on mode
+    const colors = isDarkMode ? lightColors.dark : lightColors.light
 
     return (
         <>
-            {/* Adaptive ambient light */}
+            {/* Adaptive ambient light with soft, diffuse illumination */}
             <ambientLight
-                color={isDarkMode ? lightParams.darkColor : lightParams.baseColor}
-                intensity={lightParams.ambientLightIntensity}
+                color={colors.ambient}
+                intensity={lightIntensities.ambient}
             />
 
-            {/* Primary directional light with adaptive positioning */}
+            {/* Primary directional light with enhanced shadow configuration */}
             <directionalLight
                 position={[10, 10, 10]}
-                intensity={lightParams.directLightIntensity}
-                color={lightParams.baseColor}
+                intensity={lightIntensities.primary}
+                color={colors.directional}
                 castShadow
                 shadow-mapSize-width={2048}
                 shadow-mapSize-height={2048}
@@ -59,21 +67,24 @@ export const Lights: React.FC<LightsProps> = ({
                 shadow-camera-top={10}
                 shadow-camera-bottom={-10}
                 shadow-bias={-0.001} // Reduce shadow artifacts
+                shadow-radius={4}    // Soft shadow edges
             />
 
-            {/* Secondary directional light from opposite angle */}
+            {/* Secondary directional light for balanced illumination */}
             <directionalLight
                 position={[-5, 5, -5]}
-                intensity={lightParams.directLightIntensity * 0.8}
-                color={lightParams.baseColor}
+                intensity={lightIntensities.secondary}
+                color={colors.directional}
             />
 
-            {/* Soft fill light with adaptive intensity */}
+            {/* Soft fill light with ground color variation */}
             <hemisphereLight
-                color={isDarkMode ? lightParams.darkColor : lightParams.baseColor}
-                groundColor={lightParams.groundColor}
-                intensity={lightParams.hemisphereLightIntensity}
+                color={colors.directional}
+                groundColor={colors.ground}
+                intensity={lightIntensities.hemisphere}
             />
         </>
     )
 }
+
+Lights.displayName = 'Lights'

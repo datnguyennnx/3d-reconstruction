@@ -1,248 +1,181 @@
-import { useState, useEffect, useRef } from 'react'
+import { useRef, useEffect, useCallback } from 'react'
 import { ChatRow } from './ChatRow'
 import { Input } from '../ui/input'
 import { Button } from '../ui/button'
-import { Dot } from '../Common/Dot'
 import { ImageUpload } from '../Common/ImageUpload'
-
-interface Message {
-    content: string
-    isUser: boolean
-    isStreaming: boolean
-    images?: string[]
-}
+import { useChatState } from '../../hooks/useChatState'
 
 interface ChatInterfaceProps {
     initialMessage: string
-    onNewImage: (imageUrl: string) => void
     on3DModelChange: (modelUrl: string) => void
 }
 
 export const ChatInterface: React.FC<ChatInterfaceProps> = ({
     initialMessage,
-    onNewImage,
     on3DModelChange,
 }) => {
-    const [messages, setMessages] = useState<Message[]>([
-        { content: initialMessage, isUser: false, isStreaming: false },
-    ])
-    const [input, setInput] = useState('')
-    const [isConnected, setIsConnected] = useState(true)
-    const [isLoading, setIsLoading] = useState(false)
-    const [conversationId, setConversationId] = useState<string | null>(null)
+    const {
+        messages,
+        isLoading,
+        error,
+        sendMessage
+    } = useChatState({ initialMessage })
 
-    const messagesEndRef = useRef<HTMLDivElement>(null)
+    const inputRef = useRef<HTMLInputElement>(null)
+    const chatContainerRef = useRef<HTMLDivElement>(null)
+    const lastMessageRef = useRef<HTMLDivElement>(null)
 
+    // Scroll to bottom when new messages arrive or content changes
+    const scrollToBottom = useCallback((behavior: ScrollBehavior = 'smooth') => {
+        if (lastMessageRef.current) {
+            lastMessageRef.current.scrollIntoView({ 
+                behavior,
+                block: 'end'
+            })
+        }
+    }, [])
+
+    // Handle initial scroll and message updates
     useEffect(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-    }, [messages])
+        scrollToBottom('auto')
+    }, [messages]) // Run when messages change
 
+    // Handle message updates and scrolling
+    useEffect(() => {
+        const handleScroll = () => {
+            if (!chatContainerRef.current) return
+
+            const { scrollHeight, scrollTop, clientHeight } = chatContainerRef.current
+            const isNearBottom = scrollHeight - scrollTop - clientHeight < 100
+
+            if (isNearBottom) {
+                scrollToBottom()
+            }
+        }
+
+        // Scroll when messages update
+        handleScroll()
+
+        // Add scroll listener
+        const container = chatContainerRef.current
+        if (container) {
+            container.addEventListener('scroll', handleScroll)
+            return () => container.removeEventListener('scroll', handleScroll)
+        }
+    }, [messages, scrollToBottom])
+
+    // Handle image loading and scrolling
+    useEffect(() => {
+        const container = chatContainerRef.current
+        if (!container) return
+
+        const images = container.getElementsByTagName('img')
+        if (!images.length) return
+
+        const handleImageLoad = () => {
+            const { scrollHeight, scrollTop, clientHeight } = container
+            const isNearBottom = scrollHeight - scrollTop - clientHeight < 100
+
+            if (isNearBottom) {
+                scrollToBottom()
+            }
+        }
+
+        Array.from(images).forEach(img => {
+            if (img.complete) {
+                handleImageLoad()
+            } else {
+                img.addEventListener('load', handleImageLoad)
+            }
+        })
+
+        return () => {
+            Array.from(images).forEach(img => {
+                img.removeEventListener('load', handleImageLoad)
+            })
+        }
+    }, [messages, scrollToBottom])
+
+    // Handle form submission
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        if (input.trim()) {
-            sendMessage(input)
-            setInput('')
+        const message = inputRef.current?.value.trim()
+        
+        if (!message || isLoading) return
+
+        // Clear input immediately
+        if (inputRef.current) {
+            inputRef.current.value = ''
         }
+
+        // Send message
+        await sendMessage(message)
     }
 
-    const handleImageUpload = async (file: File) => {
-        try {
-            const formData = new FormData()
-            formData.append('file', file)
-
-            const response = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL}/api/remove-background`,
-                {
-                    method: 'POST',
-                    // Additional configuration as needed
-                },
-            )
-
-            if (!response.ok) {
-                throw new Error('Failed to process image')
+    // Handle input key press
+    const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault()
+            const form = e.currentTarget.form
+            if (form) {
+                form.dispatchEvent(new Event('submit', { cancelable: true }))
             }
-
-            const blob = await response.blob()
-            const imageUrl = URL.createObjectURL(blob)
-            onNewImage(imageUrl)
-
-            setMessages((prev) => [
-                ...prev,
-                {
-                    content: 'Uploaded and processed an image',
-                    isUser: true,
-                    isStreaming: false,
-                },
-            ])
-        } catch (error) {
-            console.error('Error uploading image:', error)
-            setMessages((prev) => [
-                ...prev,
-                {
-                    content: 'Error: Failed to process image. Please try again.',
-                    isUser: false,
-                    isStreaming: false,
-                },
-            ])
-        }
-    }
-
-    const sendMessage = async (message: string) => {
-        try {
-            // Add user message to chat
-            setMessages((prev) => [...prev, { content: message, isUser: true, isStreaming: false }])
-
-            // Prepare request body
-            const requestBody = JSON.stringify({
-                message,
-                conversation_id: conversationId,
-                user_id: 'default-user',
-            })
-
-            // Create a new AI response message
-            const aiResponseMessage: Message = {
-                content: '',
-                isUser: false,
-                isStreaming: true,
-                images: [],
-            }
-            setMessages((prev) => [...prev, aiResponseMessage])
-
-            // Send message to backend
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/chat/stream`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: requestBody,
-            })
-
-            if (!response.ok) {
-                throw new Error('Failed to send message')
-            }
-
-            const reader = response.body?.getReader()
-            const decoder = new TextDecoder()
-
-            if (!reader) {
-                throw new Error('No response body')
-            }
-
-            let fullResponse = ''
-            const images: string[] = []
-
-            while (true) {
-                const { done, value } = await reader.read()
-
-                if (done) break
-
-                const chunk = decoder.decode(value)
-                console.log('Raw chunk:', chunk)
-
-                try {
-                    const lines = chunk.split('\n')
-                    for (const line of lines) {
-                        if (line.startsWith('data: ')) {
-                            try {
-                                const data = JSON.parse(line.slice(6))
-                                console.log('Parsed data:', data)
-
-                                switch (data.event) {
-                                    case 'message':
-                                        fullResponse += data.answer || ''
-                                        setMessages((prev) => {
-                                            const updatedMessages = [...prev]
-                                            const lastMessageIndex = updatedMessages.length - 1
-                                            updatedMessages[lastMessageIndex] = {
-                                                ...updatedMessages[lastMessageIndex],
-                                                content: fullResponse,
-                                                images: images,
-                                            }
-                                            return updatedMessages
-                                        })
-                                        break
-
-                                    case 'message_file':
-                                        if (data.type === 'image' && data.url) {
-                                            images.push(data.url)
-                                            setMessages((prev) => {
-                                                const updatedMessages = [...prev]
-                                                const lastMessageIndex = updatedMessages.length - 1
-                                                updatedMessages[lastMessageIndex] = {
-                                                    ...updatedMessages[lastMessageIndex],
-                                                    images: images,
-                                                }
-                                                return updatedMessages
-                                            })
-                                        }
-                                        break
-
-                                    case 'message_end':
-                                        setMessages((prev) => {
-                                            const updatedMessages = [...prev]
-                                            const lastMessageIndex = updatedMessages.length - 1
-                                            updatedMessages[lastMessageIndex] = {
-                                                ...updatedMessages[lastMessageIndex],
-                                                isStreaming: false,
-                                            }
-                                            return updatedMessages
-                                        })
-                                        setConversationId(data.conversation_id)
-                                        break
-                                }
-                            } catch (parseError) {
-                                console.error('Error parsing JSON:', parseError)
-                            }
-                        }
-                    }
-                } catch (error) {
-                    console.error('Error processing chunk:', error)
-                }
-            }
-        } catch (error) {
-            console.error('Error sending message:', error)
-            setMessages((prev) => [
-                ...prev,
-                {
-                    content: `Error: ${error instanceof Error ? error.message : 'Unable to send message'}. Please try again.`,
-                    isUser: false,
-                    isStreaming: false,
-                },
-            ])
         }
     }
 
     return (
-        <div className={`w-full h-full flex flex-col border-2 bg-white rounded-lg overflow-hidden`}>
-            <div className="h-full overflow-y-auto p-8 no-scrollbar">
+        <div className="w-full h-full flex flex-col border-2 bg-white rounded-lg overflow-hidden">
+            <div 
+                ref={chatContainerRef}
+                className="h-full overflow-y-auto p-8 no-scrollbar"
+                role="log"
+                aria-live="polite"
+                aria-label="Chat messages"
+            >
                 {messages.map((message, index) => (
-                    <ChatRow
-                        key={index}
-                        message={message.content}
-                        images={message.images}
-                        isUser={message.isUser}
-                        bgColor={message.isUser ? 'bg-blue-100' : 'bg-gray-100'}
-                        isStreaming={message.isStreaming}
-                    />
+                    <div
+                        key={`${message.isUser ? 'user' : 'ai'}-${message.timestamp}-${index}`}
+                        ref={index === messages.length - 1 ? lastMessageRef : undefined}
+                    >
+                        <ChatRow
+                            message={message.content}
+                            images={message.images || []}
+                            isUser={message.isUser}
+                            bgColor={message.isUser ? 'bg-blue-100' : 'bg-gray-100'}
+                            isStreaming={message.isStreaming}
+                            isLoading={isLoading && index === messages.length - 1}
+                            on3DModelGenerate={on3DModelChange}
+                        />
+                    </div>
                 ))}
-                <div ref={messagesEndRef} />
+                {error && (
+                    <div 
+                        className="text-red-500 text-center my-2 px-4 py-2 bg-red-50 rounded"
+                        role="alert"
+                    >
+                        {error}
+                    </div>
+                )}
             </div>
-            <div className="flex flex-row w-full items-center">
+            <div className="flex flex-row w-full items-center border-t">
                 <div className="w-[95%]">
                     <form onSubmit={handleSubmit} className="p-4">
                         <div className="flex">
                             <Input
+                                ref={inputRef}
                                 type="text"
                                 name="message"
-                                value={input}
-                                onChange={(e) => setInput(e.target.value)}
                                 placeholder="Ask for anything"
-                                className={`flex-grow mr-2`}
+                                className="flex-grow mr-2"
+                                disabled={isLoading}
+                                onKeyPress={handleKeyPress}
+                                aria-label="Message input"
                             />
                             <Button
                                 type="submit"
-                                disabled={isLoading || !isConnected}
-                                className={`text-white bg-black`}
+                                className="text-white bg-black hover:bg-gray-800 disabled:bg-gray-400"
+                                disabled={isLoading}
+                                aria-label="Send message"
                             >
                                 Send
                             </Button>
@@ -251,7 +184,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                 </div>
                 <div className="w-[5%]">
                     <ImageUpload
-                        onImageUpload={handleImageUpload}
+                        on3DModelGenerate={on3DModelChange}
                         maxSize={5}
                         className="bg-white shadow-lg"
                     />
@@ -260,3 +193,5 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
         </div>
     )
 }
+
+ChatInterface.displayName = 'ChatInterface'

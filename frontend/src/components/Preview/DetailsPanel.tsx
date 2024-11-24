@@ -10,7 +10,7 @@ export const DetailsPanel: React.FC<DetailsPanelProps> = ({ modelDetails }) => {
     }
 
     return (
-        <div className="bg-white/90 dark:bg-black/90 p-4 rounded-lg shadow-lg border border-gray-200 dark:border-gray-800">
+        <div className="absolute top-4 left-4 z-10 bg-white/90 dark:bg-black/90 p-4 rounded-lg shadow-lg border border-gray-200 dark:border-gray-800 max-w-[250px] w-full">
             <h2 className="text-xl font-bold mb-4 text-gray-800 dark:text-gray-200 border-b pb-2 border-gray-300 dark:border-gray-700">
                 Model Metrics
             </h2>

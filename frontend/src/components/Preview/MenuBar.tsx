@@ -7,13 +7,15 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from '../ui/dropdown-menu'
+import { type MaterialType } from '../3D/types'
 
 interface MenuBarProps {
     isDarkMode: boolean
     toggleDarkMode: () => void
     toggleFullScreen: () => void
     isFullScreen: boolean
-    onChangeMaterial: (material: string) => void
+    onChangeMaterial: (material: MaterialType) => void
+    currentMaterial: MaterialType
 }
 
 export const MenuBar: React.FC<MenuBarProps> = ({
@@ -22,6 +24,7 @@ export const MenuBar: React.FC<MenuBarProps> = ({
     toggleFullScreen,
     isFullScreen,
     onChangeMaterial,
+    currentMaterial,
 }) => {
     const buttonClass = `rounded-md p-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all duration-200 ease-in-out hover:bg-gray-200 dark:hover:bg-gray-200 `
     const activeButtonClass = `${buttonClass} bg-gray-200 dark:bg-gray-700 text-black dark:text-white`
@@ -47,30 +50,17 @@ export const MenuBar: React.FC<MenuBarProps> = ({
                             isDarkMode ? 'bg-black text-white ' : 'bg-white text-black'
                         } p-1.5 rounded-md shadow-lg`}
                     >
-                        <DropdownMenuItem
-                            onClick={() => onChangeMaterial('basic')}
-                            className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-50 dark:hover:text-black px-2 py-1 rounded"
-                        >
-                            Basic
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                            onClick={() => onChangeMaterial('normal')}
-                            className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-50 dark:hover:text-black px-2 py-1 rounded"
-                        >
-                            Normal
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                            onClick={() => onChangeMaterial('phong')}
-                            className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-50 dark:hover:text-black px-2 py-1 rounded"
-                        >
-                            Phong
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                            onClick={() => onChangeMaterial('standard')}
-                            className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-50 dark:hover:text-black px-2 py-1 rounded"
-                        >
-                            Standard
-                        </DropdownMenuItem>
+                        {(['basic', 'normal', 'phong', 'standard'] as MaterialType[]).map((material) => (
+                            <DropdownMenuItem
+                                key={material}
+                                onClick={() => onChangeMaterial(material)}
+                                className={`cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-50 dark:hover:text-black px-2 py-1 rounded ${
+                                    currentMaterial === material ? 'bg-gray-200 dark:bg-gray-700' : ''
+                                }`}
+                            >
+                                {material.charAt(0).toUpperCase() + material.slice(1)}
+                            </DropdownMenuItem>
+                        ))}
                     </DropdownMenuContent>
                 </DropdownMenu>
             </>

@@ -1,67 +1,46 @@
-import React, { useState } from 'react'
-import { ThreeViewer } from '@/components/3D'
+"use client"
+
+import React from 'react'
+import { ThreeViewer } from '../3D/ThreeViewer'
 import { MenuBar } from './MenuBar'
-import { DetailsPanel } from './DetailsPanel'
-import { type PreviewProps } from './types'
-import { type ModelDetails, type MaterialType } from '@/components/3D/types'
+import { PreviewProps } from './types'
 
 export const Preview: React.FC<PreviewProps> = ({
-    objUrl,
-    isDarkMode,
-    toggleDarkMode,
-    toggleFullScreen,
-    isFullScreen,
-    onModelLoaded,
-    modelDetails,
-    currentMaterial,
-    onChangeMaterial,
+  objUrl,
+  isDarkMode,
+  toggleDarkMode,
+  toggleFullScreen,
+  isFullScreen,
+  onModelLoaded,
+  modelDetails,
+  currentMaterial,
+  onChangeMaterial,
+  isModelLoading,
+  modelLoadingProgress,
+  modelLoadError
 }) => {
-    const [localModelDetails, setLocalModelDetails] = useState<ModelDetails | null>(
-        modelDetails || null,
-    )
-
-    const handleModelLoaded = (details: ModelDetails) => {
-        setLocalModelDetails(details)
-        if (onModelLoaded) {
-            onModelLoaded(details)
-        }
-    }
-
-    // Ensure currentMaterial is of MaterialType
-    const safeMaterial: MaterialType = [
-        'basic',
-        'normal',
-        'phong',
-        'standard',
-        'wireframe',
-        'transparent',
-        'custom',
-    ].includes(currentMaterial as MaterialType)
-        ? (currentMaterial as MaterialType)
-        : 'standard'
-
-    return (
-        <div className="h-full flex flex-col border-2 rounded-lg overflow-hidden relative">
-            <MenuBar
-                isDarkMode={isDarkMode}
-                toggleDarkMode={toggleDarkMode}
-                toggleFullScreen={toggleFullScreen}
-                isFullScreen={isFullScreen}
-                onChangeMaterial={onChangeMaterial}
-            />
-            <div className="flex-grow flex relative">
-                <ThreeViewer
-                    objUrl={objUrl}
-                    isDarkMode={isDarkMode}
-                    currentMaterial={safeMaterial}
-                    onModelLoaded={handleModelLoaded}
-                />
-                {localModelDetails && (
-                    <div className="absolute top-4 left-4 z-10">
-                        <DetailsPanel modelDetails={localModelDetails} />
-                    </div>
-                )}
-            </div>
-        </div>
-    )
+  return (
+    <div className={`flex flex-col h-full w-full ${isDarkMode ? 'dark' : 'light'}`}>
+      <MenuBar 
+        isDarkMode={isDarkMode}
+        toggleDarkMode={toggleDarkMode}
+        toggleFullScreen={toggleFullScreen}
+        isFullScreen={isFullScreen}
+        currentMaterial={currentMaterial}
+        onChangeMaterial={onChangeMaterial}
+      />
+      <div className="flex-grow h-full overflow-hidden">
+        <ThreeViewer 
+          modelUrl={objUrl}
+          objUrl={objUrl}
+          isDarkMode={isDarkMode}
+          currentMaterial={currentMaterial}
+          isModelLoading={isModelLoading}
+          modelLoadingProgress={modelLoadingProgress}
+          modelLoadError={modelLoadError}
+          onModelLoaded={onModelLoaded}
+        />
+      </div>
+    </div>
+  )
 }

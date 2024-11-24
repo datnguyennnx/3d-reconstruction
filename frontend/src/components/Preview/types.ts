@@ -1,25 +1,37 @@
-import { type ModelDetails } from '@/components/3D/types'
+import { MaterialType, ModelDetails, CameraConfig } from '../3D/types'
 
 export interface ImageData {
-    id?: string
-    url: string
-    name?: string
-    type?: string
-    selected?: boolean
+  file: File | null
+  preview: string | null
+  selected?: boolean
+}
+
+export interface MenuBarProps {
+  isDarkMode: boolean
+  toggleDarkMode: () => void
+  toggleFullScreen: () => void
+  isFullScreen: boolean
+  currentMaterial: MaterialType
+  onChangeMaterial: (material: MaterialType) => void
+  cameraConfig?: CameraConfig
 }
 
 export interface DetailsPanelProps {
-    modelDetails?: ModelDetails
+  modelDetails?: ModelDetails | null
 }
 
 export interface PreviewProps {
-    objUrl: string
-    isDarkMode: boolean
-    toggleDarkMode: () => void
-    toggleFullScreen: () => void
-    isFullScreen: boolean
-    onModelLoaded?: (details: ModelDetails) => void
-    modelDetails?: ModelDetails | null
-    currentMaterial: string
-    onChangeMaterial: (material: string) => void
+  objUrl: string
+  isDarkMode: boolean
+  toggleDarkMode: () => void
+  toggleFullScreen: () => void
+  isFullScreen: boolean
+  onModelLoaded: (details: ModelDetails) => void
+  modelDetails?: ModelDetails | null
+  currentMaterial: MaterialType
+  onChangeMaterial: (material: MaterialType) => void
+  isModelLoading: boolean
+  modelLoadingProgress: number
+  modelLoadError: string | null
+  cameraConfig?: CameraConfig
 }

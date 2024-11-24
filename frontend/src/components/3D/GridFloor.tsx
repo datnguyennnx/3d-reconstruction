@@ -16,9 +16,9 @@ export const GridFloor: React.FC<GridFloorProps> = ({
 }) => {
     return (
         <>
-            <gridHelper args={[size, divisions, colorCenterLine, colorGrid]} position={[0, 0, 0]} />
+            <gridHelper args={[size, divisions, colorCenterLine, colorGrid]} position={[0, -0.25, 0]} />
 
-            <mesh position={[0, -0.02, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+            <mesh position={[0, -0.25, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
                 <planeGeometry args={[size, size]} />
                 <meshStandardMaterial
                     color={0xcccccc}

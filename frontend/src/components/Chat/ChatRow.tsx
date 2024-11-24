@@ -8,7 +8,8 @@ interface ChatRowProps {
     bgColor: string
     isLoading?: boolean
     isStreaming?: boolean
-    images?: string[] // Add support for images from Dify
+    images?: string[]
+    on3DModelGenerate: (src: string) => void  
 }
 
 export const ChatRow = ({
@@ -18,14 +19,23 @@ export const ChatRow = ({
     isLoading,
     isStreaming,
     images,
+    on3DModelGenerate,
 }: ChatRowProps) => {
     // Function to render message content with images
     const renderContent = () => {
         let content = message
 
-        // If there are images from Dify, append them to the message content as markdown
+        // Robust image handling with validation
         if (images && images.length > 0) {
-            content += '\n\n' + images.map((img) => `![Generated Image](${img})`).join('\n')
+            const validImages = images.filter(img => 
+                img && (img.startsWith('http') || img.startsWith('data:') || img.startsWith('/'))
+            );
+
+            if (validImages.length > 0) {
+                content += '\n\n' + validImages
+                    .map((img) => `![Generated Image](${img})`)
+                    .join('\n');
+            }
         }
 
         return content
@@ -49,12 +59,19 @@ export const ChatRow = ({
                     <div
                         className={`mx-2 py-3 px-4 ${bgColor} rounded-lg ${
                             isUser ? 'rounded-tr-none' : 'rounded-tl-none'
-                        } break-words flex-grow`}
+                        } break-words flex-grow ${isStreaming ? 'animate-pulse-subtle' : ''}`}
                     >
-                        <MarkdownRenderer content={renderContent()} isStreaming={isStreaming} />
+                        <MarkdownRenderer 
+                            content={renderContent()} 
+                            isStreaming={isStreaming} 
+                            images={images}
+                            on3DModelGenerate={on3DModelGenerate}  
+                        />
                     </div>
                 )}
             </div>
         </div>
     )
 }
+
+ChatRow.displayName = 'ChatRow'

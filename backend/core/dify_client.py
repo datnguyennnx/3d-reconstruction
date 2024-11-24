@@ -5,6 +5,7 @@ import asyncio
 from typing import Optional, Dict, Any, AsyncGenerator
 from fastapi import HTTPException
 import logging
+from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
@@ -51,6 +52,7 @@ class DifyClient:
                     logger.info(f"Received response from Dify API - Status: {response.status_code}")
                     response.raise_for_status()
                     
+                    event_counter = 0
                     async for line in response.aiter_lines():
                         if line.startswith('data: '):
                             try:
@@ -58,35 +60,45 @@ class DifyClient:
                                 data = json.loads(line[6:])
                                 logger.debug(f"Parsed data: {data}")
                                 
-                                # Standardize event format
+                                # Standardize event format with additional metadata
+                                event_data = {
+                                    "timestamp": datetime.now().isoformat(),
+                                    "event_id": event_counter
+                                }
+                                
                                 if 'answer' in data:
-                                    yield json.dumps({
+                                    event_data.update({
                                         "event": "message",
                                         "answer": data['answer']
                                     })
                                 elif 'type' in data and data['type'] == 'image':
-                                    yield json.dumps({
+                                    event_data.update({
                                         "event": "message_file",
                                         "type": "image",
                                         "url": data['url']
                                     })
                                 elif 'conversation_id' in data:
-                                    yield json.dumps({
+                                    event_data.update({
                                         "event": "message_end",
                                         "conversation_id": data['conversation_id']
                                     })
+                                
+                                yield json.dumps(event_data)
+                                event_counter += 1
                                 
                             except json.JSONDecodeError as e:
                                 logger.error(f"Error parsing JSON: {e}, Line: {line}")
                                 yield json.dumps({
                                     "event": "error",
-                                    "message": f"JSON parsing error: {str(e)}"
+                                    "message": f"JSON parsing error: {str(e)}",
+                                    "timestamp": datetime.now().isoformat()
                                 })
                             except Exception as e:
                                 logger.error(f"Unexpected error processing line: {e}")
                                 yield json.dumps({
                                     "event": "error", 
-                                    "message": str(e)
+                                    "message": str(e),
+                                    "timestamp": datetime.now().isoformat()
                                 })
 
         except httpx.HTTPError as e:
@@ -100,14 +112,16 @@ class DifyClient:
             logger.error(f"HTTP Error: {error_msg}")
             yield json.dumps({
                 "event": "error", 
-                "message": error_msg
+                "message": error_msg,
+                "timestamp": datetime.now().isoformat()
             })
         except Exception as e:
             error_msg = f"Unexpected error: {str(e)}"
             logger.error(error_msg)
             yield json.dumps({
                 "event": "error", 
-                "message": error_msg
+                "message": error_msg,
+                "timestamp": datetime.now().isoformat()
             })
 
     async def stop_generation(self, task_id: str, user_id: str) -> Dict[str, Any]:
