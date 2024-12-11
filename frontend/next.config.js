@@ -25,12 +25,9 @@ module.exports = {
         return config
     },
     transpilePackages: ['three'],
-
+    
     env: {
-        NEXT_PUBLIC_API_URL: 'http://localhost:8000',
-        NEXT_PUBLIC_3D_MODEL_API_ENDPOINT:
-            'https://0d00-2405-4802-9019-5ea0-85ed-7fea-cab5-4fdb.ngrok-free.app/predict',
+        NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
+        NEXT_PUBLIC_3D_MODEL_API_ENDPOINT: process.env.NEXT_PUBLIC_3D_MODEL_API_ENDPOINT,
     },
-
-    // ...other config
 }
