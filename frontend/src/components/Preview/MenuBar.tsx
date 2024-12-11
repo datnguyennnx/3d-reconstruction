@@ -50,17 +50,21 @@ export const MenuBar: React.FC<MenuBarProps> = ({
                             isDarkMode ? 'bg-black text-white ' : 'bg-white text-black'
                         } p-1.5 rounded-md shadow-lg`}
                     >
-                        {(['basic', 'normal', 'phong', 'standard'] as MaterialType[]).map((material) => (
-                            <DropdownMenuItem
-                                key={material}
-                                onClick={() => onChangeMaterial(material)}
-                                className={`cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-50 dark:hover:text-black px-2 py-1 rounded ${
-                                    currentMaterial === material ? 'bg-gray-200 dark:bg-gray-300' : ''
-                                }`}
-                            >
-                                {material.charAt(0).toUpperCase() + material.slice(1)}
-                            </DropdownMenuItem>
-                        ))}
+                        {(['basic', 'normal', 'phong', 'standard'] as MaterialType[]).map(
+                            (material) => (
+                                <DropdownMenuItem
+                                    key={material}
+                                    onClick={() => onChangeMaterial(material)}
+                                    className={`cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-50 dark:hover:text-black px-2 py-1 rounded ${
+                                        currentMaterial === material
+                                            ? 'bg-gray-200 dark:bg-gray-300'
+                                            : ''
+                                    }`}
+                                >
+                                    {material.charAt(0).toUpperCase() + material.slice(1)}
+                                </DropdownMenuItem>
+                            ),
+                        )}
                     </DropdownMenuContent>
                 </DropdownMenu>
             </>

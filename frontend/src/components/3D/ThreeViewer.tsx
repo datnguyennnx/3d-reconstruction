@@ -6,11 +6,11 @@ import { Lights } from './Lights'
 import { AdaptiveCamera } from './CameraController'
 import { LoadingPlaceholder } from './LoadingPlaceholder'
 import { DetailsPanel } from '../Preview/DetailsPanel'
-import { 
-    type ThreeViewerProps, 
-    type MaterialType, 
-    type ModelDetails, 
-    type CameraConfig
+import {
+    type ThreeViewerProps,
+    type MaterialType,
+    type ModelDetails,
+    type CameraConfig,
 } from './types'
 import * as THREE from 'three'
 
@@ -50,7 +50,7 @@ export const ThreeViewer: React.FC<ThreeViewerProps> = ({
     adaptiveCamera = true,
     maxModelScale = 1,
     cameraConfig = {},
-    modelDetails: initialModelDetails
+    modelDetails: initialModelDetails,
 }) => {
     // Stable references for callbacks
     const onModelLoadedRef = useRef(onModelLoaded)
@@ -58,46 +58,44 @@ export const ThreeViewer: React.FC<ThreeViewerProps> = ({
 
     // State management
     const [modelDetails, setModelDetails] = useState<ModelDetails | null>(
-        initialModelDetails || null
+        initialModelDetails || null,
     )
-    
+
     const [modelLoadProgress, setModelLoadProgress] = useState(0)
     const [modelLoadError, setModelLoadError] = useState<string | null>(null)
-    
+
     // Material and background color
     const material = createMaterial(currentMaterial)
     const backgroundColor = isDarkMode ? '#1a1a1a' : '#f0f0f0'
-    
+
     // Stable callbacks
     const handleModelLoaded = useCallback((details: ModelDetails) => {
         setModelDetails(details)
         setModelLoadError(null)
         setModelLoadProgress(100)
-        
+
         if (onModelLoadedRef.current) {
             onModelLoadedRef.current(details)
         }
     }, [])
-    
+
     const handleModelLoadProgress = useCallback((progress: number) => {
         setModelLoadProgress(progress)
     }, [])
-    
+
     const handleModelLoadError = useCallback((error: string) => {
         setModelLoadError(error)
         setModelLoadProgress(0)
     }, [])
-    
+
     // Floor size calculation
-    const floorSize = modelDetails 
+    const floorSize = modelDetails
         ? Math.max(10, Math.max(modelDetails.sizeX, modelDetails.sizeY, modelDetails.sizeZ) * 2.5)
         : 10
 
     return (
         <div className="relative w-full h-full overflow-hidden">
-            {modelDetails && (
-                <DetailsPanel modelDetails={modelDetails} />
-            )}
+            {modelDetails && <DetailsPanel modelDetails={modelDetails} />}
             <Canvas
                 key={objUrl} // Force re-render on URL change
                 className="w-full h-full"
@@ -111,30 +109,26 @@ export const ThreeViewer: React.FC<ThreeViewerProps> = ({
                 }}
             >
                 <color attach="background" args={[backgroundColor]} />
-                <AdaptiveCamera 
-                    modelDetails={modelDetails} 
-                    cameraConfig={cameraConfig} 
-                />
-                <OrbitControls 
-                    enableDamping 
-                    dampingFactor={0.05}
-                    enableZoom 
-                    enablePan
-                />
-                <Lights 
+                <AdaptiveCamera modelDetails={modelDetails} cameraConfig={cameraConfig} />
+                <OrbitControls enableDamping dampingFactor={0.05} enableZoom enablePan />
+                <Lights
                     isDarkMode={isDarkMode}
-                    modelSize={modelDetails ? {
-                        x: modelDetails.sizeX,
-                        y: modelDetails.sizeY,
-                        z: modelDetails.sizeZ
-                    } : undefined}
+                    modelSize={
+                        modelDetails
+                            ? {
+                                  x: modelDetails.sizeX,
+                                  y: modelDetails.sizeY,
+                                  z: modelDetails.sizeZ,
+                              }
+                            : undefined
+                    }
                 />
                 <Suspense
                     fallback={
-                        <LoadingPlaceholder 
-                            progress={modelLoadProgress} 
-                            error={modelLoadError} 
-                            color={isDarkMode ? '#ffffff' : '#000000'} 
+                        <LoadingPlaceholder
+                            progress={modelLoadProgress}
+                            error={modelLoadError}
+                            color={isDarkMode ? '#ffffff' : '#000000'}
                         />
                     }
                 >

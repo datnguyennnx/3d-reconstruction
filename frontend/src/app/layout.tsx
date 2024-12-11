@@ -15,7 +15,8 @@ const geistMono = localFont({
 
 export const metadata: Metadata = {
     title: '3D Reconstruction',
-    description: 'Development of a Comprehensive Deep Learning-Based System for 3D Reconstruction from 2D Images',
+    description:
+        'Development of a Comprehensive Deep Learning-Based System for 3D Reconstruction from 2D Images',
 }
 
 export default function RootLayout({

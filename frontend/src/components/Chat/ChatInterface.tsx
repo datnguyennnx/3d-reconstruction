@@ -14,12 +14,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
     initialMessage,
     on3DModelChange,
 }) => {
-    const {
-        messages,
-        isLoading,
-        error,
-        sendMessage
-    } = useChatState({ initialMessage })
+    const { messages, isLoading, error, sendMessage } = useChatState({ initialMessage })
 
     const inputRef = useRef<HTMLInputElement>(null)
     const chatContainerRef = useRef<HTMLDivElement>(null)
@@ -28,9 +23,9 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
     // Scroll to bottom when new messages arrive or content changes
     const scrollToBottom = useCallback((behavior: ScrollBehavior = 'smooth') => {
         if (lastMessageRef.current) {
-            lastMessageRef.current.scrollIntoView({ 
+            lastMessageRef.current.scrollIntoView({
                 behavior,
-                block: 'end'
+                block: 'end',
             })
         }
     }, [])
@@ -81,7 +76,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
             }
         }
 
-        Array.from(images).forEach(img => {
+        Array.from(images).forEach((img) => {
             if (img.complete) {
                 handleImageLoad()
             } else {
@@ -90,7 +85,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
         })
 
         return () => {
-            Array.from(images).forEach(img => {
+            Array.from(images).forEach((img) => {
                 img.removeEventListener('load', handleImageLoad)
             })
         }
@@ -100,7 +95,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         const message = inputRef.current?.value.trim()
-        
+
         if (!message || isLoading) return
 
         // Clear input immediately
@@ -125,7 +120,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
     return (
         <div className="w-full h-full flex flex-col border-2 bg-white rounded-lg overflow-hidden">
-            <div 
+            <div
                 ref={chatContainerRef}
                 className="h-full overflow-y-auto p-8 no-scrollbar"
                 role="log"
@@ -149,7 +144,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                     </div>
                 ))}
                 {error && (
-                    <div 
+                    <div
                         className="text-red-500 text-center my-2 px-4 py-2 bg-red-50 rounded"
                         role="alert"
                     >

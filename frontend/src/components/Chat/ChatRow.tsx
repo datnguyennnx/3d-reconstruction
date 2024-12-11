@@ -9,7 +9,7 @@ interface ChatRowProps {
     isLoading?: boolean
     isStreaming?: boolean
     images?: string[]
-    on3DModelGenerate: (src: string) => void  
+    on3DModelGenerate: (src: string) => void
 }
 
 export const ChatRow = ({
@@ -27,14 +27,15 @@ export const ChatRow = ({
 
         // Robust image handling with validation
         if (images && images.length > 0) {
-            const validImages = images.filter(img => 
-                img && (img.startsWith('http') || img.startsWith('data:') || img.startsWith('/'))
-            );
+            const validImages = images.filter(
+                (img) =>
+                    img &&
+                    (img.startsWith('http') || img.startsWith('data:') || img.startsWith('/')),
+            )
 
             if (validImages.length > 0) {
-                content += '\n\n' + validImages
-                    .map((img) => `![Generated Image](${img})`)
-                    .join('\n');
+                content +=
+                    '\n\n' + validImages.map((img) => `![Generated Image](${img})`).join('\n')
             }
         }
 
@@ -61,11 +62,11 @@ export const ChatRow = ({
                             isUser ? 'rounded-tr-none' : 'rounded-tl-none'
                         } break-words flex-grow ${isStreaming ? 'animate-pulse-subtle' : ''}`}
                     >
-                        <MarkdownRenderer 
-                            content={renderContent()} 
-                            isStreaming={isStreaming} 
+                        <MarkdownRenderer
+                            content={renderContent()}
+                            isStreaming={isStreaming}
                             images={images}
-                            on3DModelGenerate={on3DModelGenerate}  
+                            on3DModelGenerate={on3DModelGenerate}
                         />
                     </div>
                 )}

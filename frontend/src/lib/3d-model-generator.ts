@@ -16,12 +16,12 @@ export class ModelGenerationError extends Error {
 export const fetchImageAsFile = async (imageUrl: string): Promise<File> => {
     try {
         // Fetch the image with CORS mode
-        const response = await fetch(imageUrl, { 
+        const response = await fetch(imageUrl, {
             headers: {
-                'Access-Control-Allow-Origin': '*'
-            }
+                'Access-Control-Allow-Origin': '*',
+            },
         })
-        
+
         if (!response.ok) {
             throw new Error(`Failed to fetch image: ${response.statusText}`)
         }
@@ -37,7 +37,9 @@ export const fetchImageAsFile = async (imageUrl: string): Promise<File> => {
         return new File([blob], filename, { type: mimeType })
     } catch (error) {
         console.error('Error converting image URL to File:', error)
-        throw new ModelGenerationError(`Failed to convert image URL to file: ${error instanceof Error ? error.message : 'Unknown error'}`)
+        throw new ModelGenerationError(
+            `Failed to convert image URL to file: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        )
     }
 }
 
@@ -84,16 +86,14 @@ export const sourceToFile = async (src: string): Promise<File> => {
 export const generate3DModel = async (imageInput: string | File): Promise<string> => {
     try {
         // Determine the API endpoint from environment variables
-        const API_ENDPOINT = process.env.NEXT_PUBLIC_3D_MODEL_API_ENDPOINT 
+        const API_ENDPOINT = process.env.NEXT_PUBLIC_3D_MODEL_API_ENDPOINT
 
-        if (!API_ENDPOINT) { 
-            throw Error("No Env")
+        if (!API_ENDPOINT) {
+            throw Error('No Env')
         }
 
         // Convert input to File if it's a URL
-        const file = imageInput instanceof File 
-            ? imageInput 
-            : await fetchImageAsFile(imageInput)
+        const file = imageInput instanceof File ? imageInput : await fetchImageAsFile(imageInput)
 
         // Validate file
         if (!file || !(file instanceof File)) {
@@ -114,22 +114,24 @@ export const generate3DModel = async (imageInput: string | File): Promise<string
                 'Access-Control-Allow-Headers': 'Content-Type',
             },
             // Add timeout to prevent hanging
-            signal: AbortSignal.timeout(100000) // 100 seconds timeout
+            signal: AbortSignal.timeout(100000), // 100 seconds timeout
         })
 
         if (!response.ok) {
             const errorText = await response.text()
-            throw new ModelGenerationError(`HTTP error! status: ${response.status}, message: ${errorText}`)
+            throw new ModelGenerationError(
+                `HTTP error! status: ${response.status}, message: ${errorText}`,
+            )
         }
 
         // Get the 3D model file as a blob
         const modelBlob = await response.blob()
-        
+
         // Create a blob URL for the .obj file
         return URL.createObjectURL(modelBlob)
     } catch (error) {
         console.error('3D Model Generation Error:', error)
-        
+
         // Wrap and rethrow the error
         if (error instanceof ModelGenerationError) {
             throw error

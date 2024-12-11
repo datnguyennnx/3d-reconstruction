@@ -11,11 +11,12 @@ import { generate3DModel } from '@/lib/3d-model-generator'
 
 export default function Index() {
     // Initial welcome message with proper formatting
-    const initialMessage = 'Hi there! I\'m your AI assistant. I can help you with 3D model generation and answer your questions. How can I assist you today?'
+    const initialMessage =
+        "Hi there! I'm your AI assistant. I can help you with 3D model generation and answer your questions. How can I assist you today?"
 
     const [images, setImages] = useState<ImageData[]>([])
     const [selectedImage, setSelectedImage] = useState(0)
-    const [objUrl, setObjUrl] = useState<string>("")
+    const [objUrl, setObjUrl] = useState<string>('')
     const [isDarkMode, setIsDarkMode] = useState(false)
     const [isFullScreen, setIsFullScreen] = useState(false)
     const [modelDetails, setModelDetails] = useState<ModelDetails | null>(null)
@@ -47,7 +48,7 @@ export default function Index() {
 
     const handle3DModelChange = useCallback(async (modelUrl: string) => {
         console.log('Attempting to generate 3D model from:', modelUrl)
-        
+
         setIsModelLoading(true)
         setModelLoadingProgress(0)
         setModelDetails(null)
@@ -66,19 +67,19 @@ export default function Index() {
             // Generate 3D model with extended timeout
             const generatedModelUrl = await Promise.race([
                 generate3DModel(modelUrl),
-                new Promise<string>((_, reject) => 
-                    setTimeout(() => reject(new Error('Model generation timed out')), 100000)
-                )
+                new Promise<string>((_, reject) =>
+                    setTimeout(() => reject(new Error('Model generation timed out')), 100000),
+                ),
             ])
 
             console.log('Generated model URL:', generatedModelUrl)
             setObjUrl(generatedModelUrl)
             setIsModelLoading(false)
             setModelLoadingProgress(100)
-            
         } catch (error) {
             console.error('3D model generation error:', error)
-            const errorMessage = error instanceof Error ? error.message : 'Failed to generate 3D model'
+            const errorMessage =
+                error instanceof Error ? error.message : 'Failed to generate 3D model'
             setModelLoadError(errorMessage)
             setIsModelLoading(false)
         }
@@ -96,7 +97,9 @@ export default function Index() {
     }
 
     return (
-        <main className={`flex min-h-screen h-screen max-w-screen items-stretch p-8 relative overflow-hidden`}>
+        <main
+            className={`flex min-h-screen h-screen max-w-screen items-stretch p-8 relative overflow-hidden`}
+        >
             <BackgroundDots className="absolute inset-0 z-0" />
             <div className="w-full h-full max-w-full z-10 relative flex">
                 <div className={`w-1/2 h-full flex flex-col pr-4`}>

@@ -14,24 +14,23 @@ export const use3DModelGenerator = () => {
      * @param onModelGenerated Callback for successful model generation
      */
     const generateModel = async (
-        imageInput: string | File, 
-        onModelGenerated: (modelUrl: string) => void
+        imageInput: string | File,
+        onModelGenerated: (modelUrl: string) => void,
     ) => {
         setIsGenerating(true)
         setError(null)
 
         try {
             // Determine the API endpoint from environment variables
-            const API_ENDPOINT = process.env.NEXT_PUBLIC_3D_MODEL_API_ENDPOINT 
+            const API_ENDPOINT = process.env.NEXT_PUBLIC_3D_MODEL_API_ENDPOINT
 
-            if (!API_ENDPOINT) { 
-                throw Error("No Env")
+            if (!API_ENDPOINT) {
+                throw Error('No Env')
             }
 
             // Convert input to File if it's a URL
-            const file = imageInput instanceof File 
-                ? imageInput 
-                : await fetchImageAsFile(imageInput)
+            const file =
+                imageInput instanceof File ? imageInput : await fetchImageAsFile(imageInput)
 
             // Validate file
             if (!file || !(file instanceof File)) {
@@ -52,7 +51,7 @@ export const use3DModelGenerator = () => {
                     'Access-Control-Allow-Headers': 'Content-Type',
                 },
                 // Add timeout to prevent hanging
-                signal: AbortSignal.timeout(100000) // 100 seconds timeout
+                signal: AbortSignal.timeout(100000), // 100 seconds timeout
             })
 
             if (!response.ok) {
@@ -68,7 +67,7 @@ export const use3DModelGenerator = () => {
             onModelGenerated(modelUrl)
         } catch (err) {
             let errorMessage = 'Failed to generate 3D model'
-            
+
             if (err instanceof ModelGenerationError) {
                 errorMessage = err.message
             } else if (err instanceof Error) {

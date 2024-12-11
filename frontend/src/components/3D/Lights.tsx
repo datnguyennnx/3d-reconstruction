@@ -11,25 +11,28 @@ export const Lights: React.FC<LightsProps> = ({
     modelSize = { x: 1, y: 1, z: 1 },
 }) => {
     // Enhanced color palette with more nuanced colors
-    const lightColors = useMemo(() => ({
-        light: {
-            ambient: 0xffffff,     // Bright white
-            directional: 0xf0f0f0, // Soft white
-            ground: 0xe0e0e0,      // Light gray
-            shadow: 0xcccccc       // Subtle shadow tone
-        },
-        dark: {
-            ambient: 0xffffff,     // Bright white
-            directional: 0xf0f0f0, // Soft white
-            ground: 0xe0e0e0,      // Light gray
-            shadow: 0xcccccc       // Subtle shadow tone
-        }
-    }), [isDarkMode])
+    const lightColors = useMemo(
+        () => ({
+            light: {
+                ambient: 0xffffff, // Bright white
+                directional: 0xf0f0f0, // Soft white
+                ground: 0xe0e0e0, // Light gray
+                shadow: 0xcccccc, // Subtle shadow tone
+            },
+            dark: {
+                ambient: 0xffffff, // Bright white
+                directional: 0xf0f0f0, // Soft white
+                ground: 0xe0e0e0, // Light gray
+                shadow: 0xcccccc, // Subtle shadow tone
+            },
+        }),
+        [isDarkMode],
+    )
 
     // Dynamic light intensity calculation based on model size
     const lightIntensities = useMemo(() => {
         const maxDimension = Math.max(modelSize.x, modelSize.y, modelSize.z)
-        
+
         // Base intensities with adaptive scaling
         const baseIntensity = isDarkMode ? 0.8 : 1.2
         const scaleFactor = Math.min(maxDimension / 2, 5) // Cap scaling at 5
@@ -38,7 +41,7 @@ export const Lights: React.FC<LightsProps> = ({
             ambient: baseIntensity * 0.6 * scaleFactor,
             primary: baseIntensity * 1.0 * scaleFactor,
             secondary: baseIntensity * 0.4 * scaleFactor,
-            hemisphere: baseIntensity * 0.5 * scaleFactor
+            hemisphere: baseIntensity * 0.5 * scaleFactor,
         }
     }, [modelSize, isDarkMode])
 
@@ -48,10 +51,7 @@ export const Lights: React.FC<LightsProps> = ({
     return (
         <>
             {/* Adaptive ambient light with soft, diffuse illumination */}
-            <ambientLight
-                color={colors.ambient}
-                intensity={lightIntensities.ambient}
-            />
+            <ambientLight color={colors.ambient} intensity={lightIntensities.ambient} />
 
             {/* Primary directional light with enhanced shadow configuration */}
             <directionalLight
@@ -67,7 +67,7 @@ export const Lights: React.FC<LightsProps> = ({
                 shadow-camera-top={10}
                 shadow-camera-bottom={-10}
                 shadow-bias={-0.001} // Reduce shadow artifacts
-                shadow-radius={4}    // Soft shadow edges
+                shadow-radius={4} // Soft shadow edges
             />
 
             {/* Secondary directional light for balanced illumination */}
