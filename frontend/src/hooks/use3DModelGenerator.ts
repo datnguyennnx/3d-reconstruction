@@ -51,7 +51,7 @@ export const use3DModelGenerator = () => {
                     'Access-Control-Allow-Headers': 'Content-Type',
                 },
                 // Add timeout to prevent hanging
-                signal: AbortSignal.timeout(100000), // 100 seconds timeout
+                signal: AbortSignal.timeout(500000), // 500 seconds timeout
             })
 
             if (!response.ok) {
