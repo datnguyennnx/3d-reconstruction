@@ -8,6 +8,7 @@ import { type ModelDetails } from '@/components/3D/types'
 import { type MaterialType } from '@/components/3D/types'
 import { type ImageData } from '@/components/Preview/types'
 import { generate3DModel } from '@/lib/3d-model-generator'
+import { use3DModelGenerator } from '@/hooks/use3DModelGenerator'
 
 export default function Index() {
     // Initial welcome message with proper formatting
@@ -24,7 +25,13 @@ export default function Index() {
     const [isModelLoading, setIsModelLoading] = useState(false)
     const [modelLoadingProgress, setModelLoadingProgress] = useState(0)
     const [modelLoadError, setModelLoadError] = useState<string | null>(null)
+    const [isDetailsPanelVisible, setIsDetailsPanelVisible] = useState(true)
 
+    const toggleDetailsPanel = () => {
+        setIsDetailsPanelVisible((prev) => !prev)
+    }
+
+    const { downloadModel } = use3DModelGenerator()
     const fullScreenRef = useRef<HTMLDivElement>(null)
 
     const handleImageSelect = (index: number) => {
@@ -96,6 +103,17 @@ export default function Index() {
         setCurrentMaterial(material)
     }
 
+    const handleDownloadModel = () => {
+        if (!objUrl) return
+
+        // Generate filename based on model details
+        const filename = modelDetails
+            ? `3d_model_${modelDetails.vertices}v_${modelDetails.triangles}t.obj`
+            : 'downloaded_model.obj'
+
+        downloadModel(objUrl, filename)
+    }
+
     return (
         <main
             className={`flex min-h-screen h-screen max-w-screen items-stretch p-8 relative overflow-hidden`}
@@ -122,6 +140,9 @@ export default function Index() {
                         isModelLoading={isModelLoading}
                         modelLoadingProgress={modelLoadingProgress}
                         modelLoadError={modelLoadError}
+                        onDownloadModel={handleDownloadModel}
+                        isDetailsPanelVisible={isDetailsPanelVisible}
+                        toggleDetailsPanel={toggleDetailsPanel}
                     />
                 </div>
             </div>

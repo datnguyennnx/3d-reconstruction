@@ -51,6 +51,7 @@ export const ThreeViewer: React.FC<ThreeViewerProps> = ({
     maxModelScale = 1,
     cameraConfig = {},
     modelDetails: initialModelDetails,
+    isDetailsPanelVisible = true,
 }) => {
     // Stable references for callbacks
     const onModelLoadedRef = useRef(onModelLoaded)
@@ -95,7 +96,7 @@ export const ThreeViewer: React.FC<ThreeViewerProps> = ({
 
     return (
         <div className="relative w-full h-full overflow-hidden">
-            {modelDetails && <DetailsPanel modelDetails={modelDetails} />}
+            {modelDetails && isDetailsPanelVisible && <DetailsPanel modelDetails={modelDetails} />}
             <Canvas
                 key={objUrl} // Force re-render on URL change
                 className="w-full h-full"

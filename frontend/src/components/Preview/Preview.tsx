@@ -18,9 +18,14 @@ export const Preview: React.FC<PreviewProps> = ({
     isModelLoading,
     modelLoadingProgress,
     modelLoadError,
+    onDownloadModel,
+    isDetailsPanelVisible = true,
+    toggleDetailsPanel,
 }) => {
     return (
-        <div className={`flex flex-col h-full w-full ${isDarkMode ? 'dark' : 'light'}`}>
+        <div
+            className={`flex flex-col h-full w-full border-2 rounded-md ${isDarkMode ? 'dark' : 'light'}`}
+        >
             <MenuBar
                 isDarkMode={isDarkMode}
                 toggleDarkMode={toggleDarkMode}
@@ -28,6 +33,9 @@ export const Preview: React.FC<PreviewProps> = ({
                 isFullScreen={isFullScreen}
                 currentMaterial={currentMaterial}
                 onChangeMaterial={onChangeMaterial}
+                onDownloadModel={onDownloadModel}
+                isDetailsPanelVisible={isDetailsPanelVisible}
+                toggleDetailsPanel={toggleDetailsPanel}
             />
             <div className="flex-grow h-full overflow-hidden">
                 <ThreeViewer
@@ -39,6 +47,7 @@ export const Preview: React.FC<PreviewProps> = ({
                     modelLoadingProgress={modelLoadingProgress}
                     modelLoadError={modelLoadError}
                     onModelLoaded={onModelLoaded}
+                    isDetailsPanelVisible={isDetailsPanelVisible}
                 />
             </div>
         </div>

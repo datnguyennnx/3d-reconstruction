@@ -25,7 +25,7 @@ module.exports = {
         return config
     },
     transpilePackages: ['three'],
-    
+
     env: {
         NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
         NEXT_PUBLIC_3D_MODEL_API_ENDPOINT: process.env.NEXT_PUBLIC_3D_MODEL_API_ENDPOINT,

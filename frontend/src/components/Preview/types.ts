@@ -14,6 +14,9 @@ export interface MenuBarProps {
     currentMaterial: MaterialType
     onChangeMaterial: (material: MaterialType) => void
     cameraConfig?: CameraConfig
+    onDownloadModel?: () => void
+    isDetailsPanelVisible?: boolean
+    toggleDetailsPanel?: () => void
 }
 
 export interface DetailsPanelProps {
@@ -34,4 +37,7 @@ export interface PreviewProps {
     modelLoadingProgress: number
     modelLoadError: string | null
     cameraConfig?: CameraConfig
+    onDownloadModel?: () => void
+    isDetailsPanelVisible?: boolean
+    toggleDetailsPanel?: () => void
 }

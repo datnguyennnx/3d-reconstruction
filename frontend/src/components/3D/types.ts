@@ -109,6 +109,7 @@ export interface ThreeViewerProps {
     isModelLoading?: boolean
     modelLoadingProgress?: number
     modelLoadError?: string | null
+    isDetailsPanelVisible?: boolean
 
     // Callback props
     onModelLoaded?: (details: ModelDetails) => void

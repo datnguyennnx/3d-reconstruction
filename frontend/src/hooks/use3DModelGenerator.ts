@@ -82,5 +82,40 @@ export const use3DModelGenerator = () => {
         }
     }
 
-    return { generateModel, isGenerating, error }
+    /**
+     * Download 3D model
+     * @param modelUrl URL of the 3D model to download
+     * @param fileName Optional custom filename for the download
+     */
+    const downloadModel = (modelUrl: string, fileName?: string) => {
+        if (!modelUrl) {
+            console.error('No model URL provided for download')
+            return
+        }
+
+        try {
+            // Create a temporary anchor element to trigger download
+            const link = document.createElement('a')
+            link.href = modelUrl
+
+            // Generate a default filename if not provided
+            const defaultFileName = `3d_model_${new Date().getTime()}.obj`
+            link.download = fileName || defaultFileName
+
+            // Append to body, click, and remove
+            document.body.appendChild(link)
+            link.click()
+            document.body.removeChild(link)
+        } catch (error) {
+            console.error('Error downloading 3D model:', error)
+            alert('Failed to download 3D model')
+        }
+    }
+
+    return {
+        generateModel,
+        downloadModel,
+        isGenerating,
+        error,
+    }
 }

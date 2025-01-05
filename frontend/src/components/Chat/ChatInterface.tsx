@@ -181,7 +181,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                     <ImageUpload
                         on3DModelGenerate={on3DModelChange}
                         maxSize={5}
-                        className="bg-white shadow-lg"
+                        className="bg-white"
                     />
                 </div>
             </div>
