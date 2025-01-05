@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useRef, useState, useCallback, memo } from 'react'
-import { ImageUp } from 'lucide-react'
+import { ImageUp, LoaderCircle } from 'lucide-react'
 import { use3DModelGenerator } from '../../hooks/use3DModelGenerator'
 
 interface ImageUploadProps {
@@ -75,8 +75,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = memo(
         return (
             <div
                 onClick={handleClick}
-                className={`cursor-pointer ${isLoading ? 'opacity-50 pointer-events-none' : ''} ${className}`}
-            >
+                className={`cursor-pointer ${isLoading ? 'opacity-50 pointer-events-none' : ''} ${className}`}>
                 <input
                     ref={fileInputRef}
                     className="hidden"
@@ -86,7 +85,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = memo(
                     disabled={isLoading}
                 />
                 {isLoading ? (
-                    <div className="animate-spin">🔄</div>
+                    <LoaderCircle className="animate-spin" />
                 ) : (
                     <ImageUp className="hover:bg-gray-200" size={28} />
                 )}
