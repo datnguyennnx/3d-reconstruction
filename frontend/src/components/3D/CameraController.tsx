@@ -56,7 +56,7 @@ export const AdaptiveCamera: React.FC<{
 
 export const CameraController = forwardRef<any, CameraControllerProps>(
     ({ config = {}, modelSize }, ref) => {
-        const { camera, gl, scene } = useThree()
+        const { camera, gl } = useThree()
         const controlsRef = useRef<any>(null)
 
         // Type guard for PerspectiveCamera

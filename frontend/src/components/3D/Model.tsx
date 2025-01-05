@@ -2,10 +2,10 @@
 
 import React, { useEffect, useRef, useState, useCallback } from 'react'
 import * as THREE from 'three'
-import { useLoader, useFrame, useThree } from '@react-three/fiber'
+import { useLoader, useFrame } from '@react-three/fiber'
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js'
 import { Text } from '@react-three/drei'
-import { type ModelProps, ModelDetails, type ModelLoadState } from './types'
+import { type ModelProps, type ModelLoadState } from './types'
 
 // Utility function to calculate model geometry
 const calculateModelGeometry = (obj: THREE.Group) => {
@@ -44,7 +44,6 @@ export const Model: React.FC<ModelProps> = ({
     centerModel = true,
 }) => {
     const modelRef = useRef<THREE.Group>(null)
-    const { gl, camera } = useThree()
     const [loadState, setLoadState] = useState<ModelLoadState>({
         status: 'loading',
         progress: 0,
@@ -78,35 +77,6 @@ export const Model: React.FC<ModelProps> = ({
             onError?.(errorMessage)
         },
         [onError],
-    )
-
-    // File validation with more flexible checks
-    const validateModelFile = useCallback(
-        async (fileUrl: string) => {
-            try {
-                const response = await fetch(fileUrl, { method: 'HEAD' })
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`)
-                }
-
-                const contentType = response.headers.get('content-type')
-                const allowedTypes = [
-                    'model/obj',
-                    'text/plain',
-                    'application/octet-stream',
-                    'application/x-tgif',
-                ]
-
-                if (!allowedTypes.some((type) => contentType?.includes(type))) {
-                    throw new Error('Invalid file type')
-                }
-            } catch (error) {
-                handleError(error)
-                throw error
-            }
-        },
-        [handleError],
     )
 
     // Model loading with improved error handling

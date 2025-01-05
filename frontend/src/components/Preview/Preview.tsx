@@ -12,7 +12,6 @@ export const Preview: React.FC<PreviewProps> = ({
     toggleFullScreen,
     isFullScreen,
     onModelLoaded,
-    modelDetails,
     currentMaterial,
     onChangeMaterial,
     isModelLoading,
@@ -24,8 +23,7 @@ export const Preview: React.FC<PreviewProps> = ({
 }) => {
     return (
         <div
-            className={`flex flex-col h-full w-full border-2 rounded-md ${isDarkMode ? 'dark' : 'light'}`}
-        >
+            className={`flex flex-col h-full w-full border-2 rounded-md ${isDarkMode ? 'dark' : 'light'}`}>
             <MenuBar
                 isDarkMode={isDarkMode}
                 toggleDarkMode={toggleDarkMode}

@@ -42,7 +42,6 @@ export const MenuBar: React.FC<MenuBarProps> = ({
     toggleDetailsPanel,
 }) => {
     const buttonClass = `rounded-md p-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all duration-200 ease-in-out hover:bg-gray-200 dark:hover:bg-gray-200 `
-    const activeButtonClass = `${buttonClass} bg-gray-200 dark:bg-gray-300 text-black dark:text-white`
     const inactiveButtonClass = `${buttonClass} ${
         isDarkMode ? 'bg-black text-white' : 'bg-white text-black'
     }`
@@ -51,8 +50,7 @@ export const MenuBar: React.FC<MenuBarProps> = ({
         <div
             className={`${
                 isDarkMode ? 'bg-black text-white' : 'bg-gray-50 text-black'
-            } p-1.5  z-20 flex space-x-1.5 justify-end`}
-        >
+            } p-1.5  z-20 flex space-x-1.5 justify-end`}>
             <>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -63,8 +61,7 @@ export const MenuBar: React.FC<MenuBarProps> = ({
                     <DropdownMenuContent
                         className={`${
                             isDarkMode ? 'bg-black text-white ' : 'bg-white text-black'
-                        } p-1.5 rounded-md shadow-lg`}
-                    >
+                        } p-1.5 rounded-md shadow-lg`}>
                         {(['basic', 'normal', 'phong', 'standard'] as MaterialType[]).map(
                             (material) => (
                                 <DropdownMenuItem
@@ -74,8 +71,7 @@ export const MenuBar: React.FC<MenuBarProps> = ({
                                         currentMaterial === material
                                             ? 'bg-gray-200 dark:bg-gray-300'
                                             : ''
-                                    }`}
-                                >
+                                    }`}>
                                     {material.charAt(0).toUpperCase() + material.slice(1)}
                                 </DropdownMenuItem>
                             ),
@@ -88,8 +84,7 @@ export const MenuBar: React.FC<MenuBarProps> = ({
                 <Button
                     onClick={onDownloadModel}
                     className={inactiveButtonClass}
-                    title="Download 3D Model"
-                >
+                    title="Download 3D Model">
                     <MdDownload className="w-5 h-5" />
                 </Button>
             )}
@@ -98,8 +93,7 @@ export const MenuBar: React.FC<MenuBarProps> = ({
                 <Button
                     onClick={toggleDetailsPanel}
                     className={inactiveButtonClass}
-                    title={isDetailsPanelVisible ? 'Hide Details' : 'Show Details'}
-                >
+                    title={isDetailsPanelVisible ? 'Hide Details' : 'Show Details'}>
                     {isDetailsPanelVisible ? (
                         <MdInfo className="w-5 h-5" />
                     ) : (
@@ -111,8 +105,7 @@ export const MenuBar: React.FC<MenuBarProps> = ({
             <Button
                 onClick={toggleDarkMode}
                 className={inactiveButtonClass}
-                title={isDarkMode ? 'Light Mode' : 'Dark Mode'}
-            >
+                title={isDarkMode ? 'Light Mode' : 'Dark Mode'}>
                 {isDarkMode ? (
                     <MdLightMode className="w-5 h-5" />
                 ) : (
@@ -122,8 +115,7 @@ export const MenuBar: React.FC<MenuBarProps> = ({
             <Button
                 onClick={toggleFullScreen}
                 className={inactiveButtonClass}
-                title={isFullScreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
-            >
+                title={isFullScreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}>
                 {isFullScreen ? (
                     <MdFullscreenExit className="w-5 h-5" />
                 ) : (

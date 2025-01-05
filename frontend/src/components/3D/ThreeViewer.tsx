@@ -6,12 +6,7 @@ import { Lights } from './Lights'
 import { AdaptiveCamera } from './CameraController'
 import { LoadingPlaceholder } from './LoadingPlaceholder'
 import { DetailsPanel } from '../Preview/DetailsPanel'
-import {
-    type ThreeViewerProps,
-    type MaterialType,
-    type ModelDetails,
-    type CameraConfig,
-} from './types'
+import { type ThreeViewerProps, type MaterialType, type ModelDetails } from './types'
 import * as THREE from 'three'
 
 // Simplified material creation function
@@ -47,7 +42,6 @@ export const ThreeViewer: React.FC<ThreeViewerProps> = ({
     isDarkMode,
     currentMaterial = 'default',
     onModelLoaded,
-    adaptiveCamera = true,
     maxModelScale = 1,
     cameraConfig = {},
     modelDetails: initialModelDetails,
@@ -89,11 +83,6 @@ export const ThreeViewer: React.FC<ThreeViewerProps> = ({
         setModelLoadProgress(0)
     }, [])
 
-    // Floor size calculation
-    const floorSize = modelDetails
-        ? Math.max(10, Math.max(modelDetails.sizeX, modelDetails.sizeY, modelDetails.sizeZ) * 2.5)
-        : 10
-
     return (
         <div className="relative w-full h-full overflow-hidden">
             {modelDetails && isDetailsPanelVisible && <DetailsPanel modelDetails={modelDetails} />}
@@ -107,8 +96,7 @@ export const ThreeViewer: React.FC<ThreeViewerProps> = ({
                 }}
                 performance={{
                     min: 0.5,
-                }}
-            >
+                }}>
                 <color attach="background" args={[backgroundColor]} />
                 <AdaptiveCamera modelDetails={modelDetails} cameraConfig={cameraConfig} />
                 <OrbitControls enableDamping dampingFactor={0.05} enableZoom enablePan />
@@ -131,8 +119,7 @@ export const ThreeViewer: React.FC<ThreeViewerProps> = ({
                             error={modelLoadError}
                             color={isDarkMode ? '#ffffff' : '#000000'}
                         />
-                    }
-                >
+                    }>
                     {objUrl && (
                         <Model
                             key={objUrl}

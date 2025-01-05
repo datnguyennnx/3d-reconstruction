@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { generate3DModel, ModelGenerationError, fetchImageAsFile } from '../lib/3d-model-generator'
+import { ModelGenerationError, fetchImageAsFile } from '../lib/3d-model-generator'
 
 /**
  * Custom hook for generating 3D models

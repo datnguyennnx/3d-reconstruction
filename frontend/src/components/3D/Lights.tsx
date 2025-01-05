@@ -1,5 +1,4 @@
 import React, { useMemo } from 'react'
-import * as THREE from 'three'
 
 interface LightsProps {
     isDarkMode?: boolean
@@ -26,7 +25,7 @@ export const Lights: React.FC<LightsProps> = ({
                 shadow: 0xcccccc, // Subtle shadow tone
             },
         }),
-        [isDarkMode],
+        [],
     )
 
     // Dynamic light intensity calculation based on model size
