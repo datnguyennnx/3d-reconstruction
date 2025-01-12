@@ -29,6 +29,9 @@ export const useChatState = ({ initialMessage }: UseChatStateOptions = {}) => {
     const [error, setError] = useState<string | null>(null)
     const [conversationId, setConversationId] = useState<string | null>(null)
 
+    const API_ENDPOINT = process.env.NEXT_PUBLIC_API_URL
+
+
     const sendMessage = useCallback(
         async (message: string) => {
             // Add user message immediately
@@ -51,7 +54,7 @@ export const useChatState = ({ initialMessage }: UseChatStateOptions = {}) => {
             setMessages((prev) => [...prev, aiMessage])
 
             try {
-                const response = await fetch('http://localhost:8000/api/chat/stream', {
+                const response = await fetch(`${API_ENDPOINT}/api/chat/stream`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
